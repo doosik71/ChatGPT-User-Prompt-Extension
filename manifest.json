@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Text Summary",
+  "description": "ChatGPT Text Summary",
+  "version": "1.0",
+  "action": {
+    "default_popup": "main.html",
+    "default_icon": {
+      "16": "images/icon.png"
+    }
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*"
+      ],
+      "js": [
+        "scripts/content.js"
+      ]
+    }
+  ]
+}
