@@ -4,7 +4,7 @@ document.addEventListener("keydown", async function (event) {
         if (clipboardText) {
             const textarea = document.querySelector("#prompt-textarea");
             if (textarea) {
-                textarea.value = "Summarize in a bullet form:\n" + clipboardText;
+                textarea.value = "Summarize compactly in bullet form:\n" + clipboardText;
                 var event = new Event("input", { bubbles: true, cancelable: true });
                 textarea.dispatchEvent(event);
 
