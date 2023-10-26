@@ -1,4 +1,5 @@
 const text_summary_options = [
+    'Summarize concisely in bullet format. Each sentence must have a subject and a verb:',
     'Summarize concisely in bullet format:',
     'Summarize concisely in bullet format and translate it into English:',
     'Summarize concisely in bullet format and translate it into Korean:',
@@ -13,6 +14,7 @@ const text_summary_options = [
     'Translate into Korean:',
     'Please answer again what you just said in English.',
     'Please answer again what you just said in Korean.',
+    'Below is the content of the research paper. Please summarize the contents in bullet form:',
 ];
 
 const text_summary_style = `
@@ -21,6 +23,14 @@ const text_summary_style = `
     top: 60px;
     right: 10px;
     padding: 18.5px;
+    color: white;
+    background: darkslategray;
+}
+#text-summary-paste-button {
+    position: fixed;
+    top: 123px;
+    right: 10px;
+    padding: 8px 14px;
     color: white;
     background: darkslategray;
 }
@@ -48,8 +58,6 @@ const text_summary_style = `
 }`;
 
 (function text_summary_init() {
-    console.log('init');
-
     // Add style.
     const style = document.createElement('style');
     style.textContent = text_summary_style;
@@ -58,8 +66,14 @@ const text_summary_style = `
     // Add button.
     const popupButton = document.createElement('button');
     popupButton.id = 'text-summary-popup-button';
-    popupButton.textContent = 'P+';
+    popupButton.textContent = 'Prompt+';
     document.body.appendChild(popupButton);
+
+    // Paste button.
+    const pasteButton = document.createElement('button');
+    pasteButton.id = 'text-summary-paste-button';
+    pasteButton.textContent = 'Paste [F9]';
+    document.body.appendChild(pasteButton);
 
     // Create popup container.
     const popupContainer = document.createElement('div');
@@ -70,7 +84,7 @@ const text_summary_style = `
     inputText.id = 'text-summary-prompt';
     inputText.type = 'text';
     inputText.placeholder = 'New prompt...';
-    inputText.value = 'Summarize concisely in bullet format:';
+    inputText.value = text_summary_options[0];
     popupContainer.appendChild(inputText);
 
     // Create add button.
@@ -126,32 +140,39 @@ const text_summary_style = `
         inputText.value = comboList.value;
     });
 
+    pasteButton.addEventListener('click', function (event) {
+        text_summary_paste();
+    })
+
     // add keydown event listner.
-    document.addEventListener("keydown", async function (event) {
+    document.addEventListener("keydown", function (event) {
         if (event.key !== "F9" && event.code !== "F9")
             return;
 
-        const textarea = document.querySelector("#prompt-textarea");
-        if (textarea === null)
-            return;
-            
-        const prompt = document.querySelector("#text-summary-prompt").value;
-        let clipboardText = await navigator.clipboard.readText();
-        if (clipboardText === null)
-            clipboardText = '';
-
-        if (clipboardText.trim() !== '')
-            textarea.value = prompt + "\n```" + clipboardText + '```';
-        else
-            textarea.value = prompt;
-
-        var event = new Event("input", { bubbles: true, cancelable: true });
-        textarea.dispatchEvent(event);
-
-        const button = document.querySelector("form.stretch button.absolute");
-        if (button) {
-            button.click();
-        }
+        text_summary_paste();
     })
-    
-}) ();
+})();
+
+async function text_summary_paste() {
+    const textarea = document.querySelector("#prompt-textarea");
+    if (textarea === null)
+        return;
+
+    const prompt = document.querySelector("#text-summary-prompt").value;
+    let clipboardText = await navigator.clipboard.readText();
+    if (clipboardText === null)
+        clipboardText = '';
+
+    if (clipboardText.trim() !== '')
+        textarea.value = prompt + "\n```" + clipboardText + '```';
+    else
+        textarea.value = prompt;
+
+    var event = new Event("input", { bubbles: true, cancelable: true });
+    textarea.dispatchEvent(event);
+
+    const button = document.querySelector("form.stretch button.absolute");
+    if (button) {
+        button.click();
+    }
+}
