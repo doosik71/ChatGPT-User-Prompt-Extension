@@ -1,148 +1,170 @@
 const text_summary_options = [
-    'Summarize concisely in bullet format. Each sentence must have a subject and a verb:',
-    'Summarize concisely in bullet format:',
-    'Summarize concisely in bullet format and translate it into English:',
-    'Summarize concisely in bullet format and translate it into Korean:',
-    'Summarize concisely in bullet format and translate it into English and Korean:',
-    'Summarize in 100 words or less:',
-    'Summarize in 100 words or less in Korean:',
-    'Summarize in 100 words or less in bullet format:',
-    'Explain the following in detail in English:',
-    'Explain the following in detail in Korean:',
-    'Regarding the previous content, please explain the following in detail:',
-    'Translate into English:',
-    'Translate into Korean:',
-    'Please answer again what you just said in English.',
-    'Please answer again what you just said in Korean.',
-    'Below is the content of the research paper. Please summarize the contents in bullet form:',
+    `I want you to act as a research paper summarizer.
+I will provide you with a research paper on a specific topic, and you will create a summary of the main points and findings of the paper.
+Your summary should be concise and should accurately and objectively communicate the key points of the paper.
+You should not include any personal opinions or interpretations in your summary but rather focus on objectively presenting the information from the paper.
+Your summary should be written in your own words and should not include any direct quotes from the paper.
+Please ensure that your summary is clear, concise, and accurately reflects the content of the original paper.`,
+    `Summarize concisely in bullet point. Each sentence must have a subject and a verb:
+{{text}}`,
+    `Summarize concisely in bullet point:
+{{text}}`,
+    `Summarize concisely in bullet point and translate it into English:
+{{text}}`,
+    `Summarize concisely in bullet point and translate it into Korean:
+{{text}}`,
+    `Summarize concisely in bullet point and translate it into English and Korean:
+{{text}}`,
+    `Summarize in 100 words or less:
+{{text}}`,
+    `Summarize in 100 words or less in Korean:
+{{text}}`,
+    `Summarize in 100 words or less in bullet point:
+{{text}}`,
+    `Explain the following in detail in English:
+{{text}}`,
+    `Explain the following in detail in Korean:
+{{text}}`,
+    `Regarding the previous content, please explain the following in detail:
+{{text}}`,
+    `Translate into English:
+{{text}}`,
+    `Translate into Korean:
+{{text}}`,
+    `Please answer again what you just said in English.`,
+    `Please answer again what you just said in Korean.`,
+    `Below is the content of the research paper. Please summarize the contents in bullet point:
+{{text}}`,
 ];
 
 const text_summary_style = `
-#text-summary-popup-button {
+#text-summary-panel {
     position: fixed;
-    top: 60px;
-    right: 10px;
-    padding: 18.5px;
+    top: 5em;
+    right: 1em;
+    color: white;
+}
+
+#text-summary-paste-button, #text-summary-popup-button, #text-summary-add-button {
+    width: 6em;
+    height: 2em;
+    margin: 0.1em;
     color: white;
     background: darkslategray;
 }
-#text-summary-paste-button {
-    position: fixed;
-    top: 123px;
-    right: 10px;
-    padding: 8px 14px;
-    color: white;
-    background: darkslategray;
-}
+
 #text-summary-prompt, #text-summary-combo-list {
-    color: darkslategray;
     background: floralwhite;
-    width: 30em;
+    width: 40em;
 }
-#text-summary-add-button {
-    margin-left: 1em;
-    margin-right: 1em;
+
+#text-summary-prompt, #text-summary-combo-list, #text-summary-combo-list option {
+    white-space: pre-wrap;
 }
-#text-summary-close-button {
-    margin-left: 1em;
+
+#text-summary-prompt {
+    color: darkslategray;
 }
+
+#text-summary-combo-list {
+    color: gray;
+}
+
 #text-summary-popup-container {
     display: none;
-    position: fixed;
-    top: 60px;
-    right: 10px;
-    padding: 10px;
-    color: white;
-    background: darkslategray;
-    border: 1px solid white;
+    border: 1px solid gray;
 }`;
 
-(function text_summary_init() {
+const text_summary_html = `
+<p style="text-align:right"><button id="text-summary-paste-button">Paste [F9]</button></p>
+<p style="text-align:right"><button id="text-summary-popup-button">Prompt ▼</button></p>
+<div id="text-summary-popup-container">
+    <select id="text-summary-combo-list">
+    </select>
+    <button id="text-summary-add-button">Add</button>
+    <br/>
+    <textarea id="text-summary-prompt" placeholder="New prompt..." spellcheck="false">${text_summary_options[0]}</textarea>
+</div>
+`;
+
+function text_summary_open() {
+    const button = document.querySelector("#text-summary-popup-button");
+    const popup = document.querySelector("#text-summary-popup-container");
+
+    if (button.textContent === 'Prompt ▼') {
+        button.textContent = 'Prompt ▲';
+        popup.style.display = 'block';
+    } else {
+        button.textContent = 'Prompt ▼';
+        popup.style.display = 'none';
+    }
+}
+
+function text_summary_add() {
+    const newItem = document.createElement('option');
+    newItem.text = document.querySelector("#text-summary-prompt").value;
+    document.querySelector("#text-summary-combo-list").add(newItem);
+    document.querySelector("#text-summary-prompt").value = '';
+}
+
+function text_summary_change() {
+    const combo_list = document.querySelector("#text-summary-combo-list");
+    document.querySelector("#text-summary-prompt").value = combo_list.options[combo_list.selectedIndex].innerHTML;
+}
+
+async function text_summary_paste() {
+    const chatgpt_textarea = document.querySelector("#prompt-textarea");
+    if (chatgpt_textarea === null)
+        return;
+
+    const prompt = document.querySelector("#text-summary-prompt").value;
+    if (prompt.includes("{{text}}")) {
+        let clipboardText = await navigator.clipboard.readText();
+        if (clipboardText === null) {
+            alert("Nothing in clipboard!");
+            return;
+        }
+
+        chatgpt_textarea.value = prompt.replace("{{text}}", clipboardText);
+    } else
+    chatgpt_textarea.value = prompt;
+
+    var event = new Event("input", { bubbles: true, cancelable: true });
+    chatgpt_textarea.dispatchEvent(event);
+
+    const button = document.querySelector("form.stretch button.absolute");
+    if (button) {
+        button.click();
+    }
+}
+
+function text_summary_init() {
     // Add style.
     const style = document.createElement('style');
     style.textContent = text_summary_style;
     document.head.appendChild(style);
 
-    // Add button.
-    const popupButton = document.createElement('button');
-    popupButton.id = 'text-summary-popup-button';
-    popupButton.textContent = 'Prompt+';
-    document.body.appendChild(popupButton);
+    // Insert html
+    const div = document.createElement('div');
+    div.id = "text-summary-panel";
+    div.innerHTML = text_summary_html;
+    document.body.appendChild(div);
 
-    // Paste button.
-    const pasteButton = document.createElement('button');
-    pasteButton.id = 'text-summary-paste-button';
-    pasteButton.textContent = 'Paste [F9]';
-    document.body.appendChild(pasteButton);
+    // Register event handler.
+    document.querySelector("#text-summary-popup-button").addEventListener("click", text_summary_open);
+    document.querySelector("#text-summary-paste-button").addEventListener("click", text_summary_paste);
+    document.querySelector("#text-summary-add-button").addEventListener("click", text_summary_add);
+    document.querySelector("#text-summary-combo-list").addEventListener("change", text_summary_change);
 
-    // Create popup container.
-    const popupContainer = document.createElement('div');
-    popupContainer.id = 'text-summary-popup-container';
-
-    // Create text input.
-    const inputText = document.createElement('input');
-    inputText.id = 'text-summary-prompt';
-    inputText.type = 'text';
-    inputText.placeholder = 'New prompt...';
-    inputText.value = text_summary_options[0];
-    popupContainer.appendChild(inputText);
-
-    // Create add button.
-    const addButton = document.createElement('button');
-    addButton.id = 'text-summary-add-button';
-    addButton.textContent = 'Add';
-    popupContainer.appendChild(addButton);
-
-    // Create combo list.
-    const comboList = document.createElement('select');
-    comboList.id = 'text-summary-combo-list';
+    // Update combo list.
+    const combo_ist = document.querySelector("#text-summary-combo-list");
 
     // Add default options.
     for (let i = 0; i < text_summary_options.length; i++) {
         const option = document.createElement('option');
         option.text = text_summary_options[i];
-        comboList.appendChild(option);
+        combo_ist.appendChild(option);
     }
-
-    popupContainer.appendChild(comboList);
-
-    // Create close button.
-    const closeButton = document.createElement('button');
-    closeButton.id = 'text-summary-close-button';
-    closeButton.textContent = 'Close';
-    popupContainer.appendChild(closeButton);
-
-    // Add popup button and popup container.
-    document.body.appendChild(popupContainer);
-
-    // Add click listener to popup button.
-    popupButton.addEventListener('click', () => {
-        popupContainer.style.display = 'block';
-        popupButton.style.display = 'none';
-    });
-
-    // Add click listener to close button.
-    closeButton.addEventListener('click', () => {
-        popupContainer.style.display = 'none';
-        popupButton.style.display = 'block';
-    });
-
-    // Add click listener to add button.
-    addButton.addEventListener('click', () => {
-        const newItem = document.createElement('option');
-        newItem.text = inputText.value;
-        comboList.add(newItem);
-        inputText.value = '';
-    });
-
-    // Add change listener to combo list.
-    comboList.addEventListener('change', () => {
-        inputText.value = comboList.value;
-    });
-
-    pasteButton.addEventListener('click', function (event) {
-        text_summary_paste();
-    })
 
     // add keydown event listner.
     document.addEventListener("keydown", function (event) {
@@ -151,28 +173,6 @@ const text_summary_style = `
 
         text_summary_paste();
     })
-})();
-
-async function text_summary_paste() {
-    const textarea = document.querySelector("#prompt-textarea");
-    if (textarea === null)
-        return;
-
-    const prompt = document.querySelector("#text-summary-prompt").value;
-    let clipboardText = await navigator.clipboard.readText();
-    if (clipboardText === null)
-        clipboardText = '';
-
-    if (clipboardText.trim() !== '')
-        textarea.value = prompt + "\n```" + clipboardText + '```';
-    else
-        textarea.value = prompt;
-
-    var event = new Event("input", { bubbles: true, cancelable: true });
-    textarea.dispatchEvent(event);
-
-    const button = document.querySelector("form.stretch button.absolute");
-    if (button) {
-        button.click();
-    }
 }
+
+text_summary_init();
