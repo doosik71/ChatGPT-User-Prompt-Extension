@@ -45,7 +45,7 @@ const text_summary_style = `
     color: white;
 }
 
-#text-summary-paste-button, #text-summary-popup-button, #text-summary-add-button {
+#text-summary-popup-button, #text-summary-add-button, #text-summary-paste-button {
     width: 6em;
     height: 2em;
     margin: 0.1em;
@@ -53,38 +53,45 @@ const text_summary_style = `
     background: darkslategray;
 }
 
-#text-summary-prompt, #text-summary-combo-list {
+#text-summary-popup-container {
+    display: none;
+    border: 1px solid gray;
+}
+
+#text-summary-combo-list, #text-summary-prompt {
     background: floralwhite;
     width: 40em;
 }
 
-#text-summary-prompt, #text-summary-combo-list, #text-summary-combo-list option {
+#text-summary-combo-list, #text-summary-combo-list option, #text-summary-prompt {
     white-space: pre-wrap;
-}
-
-#text-summary-prompt {
-    color: darkslategray;
 }
 
 #text-summary-combo-list {
     color: gray;
 }
 
-#text-summary-popup-container {
-    display: none;
-    border: 1px solid gray;
-}`;
+#text-summary-prompt {
+    color: black;
+    height: 5em;
+}
+
+#text-summary-add-button {
+    vertical-align: top;
+}
+
+`;
 
 const text_summary_html = `
-<p style="text-align:right"><button id="text-summary-paste-button">Paste [F9]</button></p>
 <p style="text-align:right"><button id="text-summary-popup-button">Prompt ▼</button></p>
 <div id="text-summary-popup-container">
     <select id="text-summary-combo-list">
     </select>
-    <button id="text-summary-add-button">Add</button>
     <br/>
     <textarea id="text-summary-prompt" placeholder="New prompt..." spellcheck="false">${text_summary_options[0]}</textarea>
+    <button id="text-summary-add-button">Add</button>
 </div>
+<p style="text-align:right"><button id="text-summary-paste-button">Paste [F9]</button></p>
 `;
 
 function text_summary_open() {
@@ -105,11 +112,13 @@ function text_summary_add() {
     newItem.text = document.querySelector("#text-summary-prompt").value;
     document.querySelector("#text-summary-combo-list").add(newItem);
     document.querySelector("#text-summary-prompt").value = '';
+    text_summary_autosize();
 }
 
 function text_summary_change() {
     const combo_list = document.querySelector("#text-summary-combo-list");
     document.querySelector("#text-summary-prompt").value = combo_list.options[combo_list.selectedIndex].innerHTML;
+    text_summary_autosize();
 }
 
 async function text_summary_paste() {
@@ -127,7 +136,7 @@ async function text_summary_paste() {
 
         chatgpt_textarea.value = prompt.replace("{{text}}", clipboardText);
     } else
-    chatgpt_textarea.value = prompt;
+        chatgpt_textarea.value = prompt;
 
     var event = new Event("input", { bubbles: true, cancelable: true });
     chatgpt_textarea.dispatchEvent(event);
@@ -136,6 +145,15 @@ async function text_summary_paste() {
     if (button) {
         button.click();
     }
+}
+
+function text_summary_autosize() {
+    var el = document.querySelector("#text-summary-prompt");
+
+    setTimeout(function () {
+        el.style.cssText = 'height:auto;';
+        el.style.cssText = 'height: ' + el.scrollHeight + 'px';
+    }, 0);
 }
 
 function text_summary_init() {
@@ -155,6 +173,7 @@ function text_summary_init() {
     document.querySelector("#text-summary-paste-button").addEventListener("click", text_summary_paste);
     document.querySelector("#text-summary-add-button").addEventListener("click", text_summary_add);
     document.querySelector("#text-summary-combo-list").addEventListener("change", text_summary_change);
+    document.querySelector("#text-summary-prompt").addEventListener("input", text_summary_autosize);
 
     // Update combo list.
     const combo_ist = document.querySelector("#text-summary-combo-list");
