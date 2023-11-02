@@ -145,6 +145,9 @@ async function text_summary_paste() {
     if (button) {
         button.click();
     }
+
+    if (document.querySelector("#text-summary-popup-button").textContent === 'Prompt ▲')
+        text_summary_open();
 }
 
 function text_summary_autosize() {
