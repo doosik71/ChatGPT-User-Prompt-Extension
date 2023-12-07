@@ -1,40 +1,17 @@
 const text_summary_options = [
-    `I want you to act as a research paper summarizer.
-I will provide you with a research paper on a specific topic, and you will create a summary of the main points and findings of the paper.
-Your summary should be concise and should accurately and objectively communicate the key points of the paper.
-You should not include any personal opinions or interpretations in your summary but rather focus on objectively presenting the information from the paper.
-Your summary should be written in your own words and should not include any direct quotes from the paper.
-Please ensure that your summary is clear, concise, and accurately reflects the content of the original paper.`,
-    `Summarize concisely in bullet point. Each sentence must have a subject and a verb:
-{{text}}`,
-    `Summarize concisely in bullet point:
-{{text}}`,
-    `Summarize concisely in bullet point and translate it into English:
-{{text}}`,
-    `Summarize concisely in bullet point and translate it into Korean:
-{{text}}`,
-    `Summarize concisely in bullet point and translate it into English and Korean:
-{{text}}`,
-    `Summarize in 100 words or less:
-{{text}}`,
-    `Summarize in 100 words or less in Korean:
-{{text}}`,
-    `Summarize in 100 words or less in bullet point:
-{{text}}`,
-    `Explain the following in detail in English:
-{{text}}`,
-    `Explain the following in detail in Korean:
-{{text}}`,
-    `Regarding the previous content, please explain the following in detail:
-{{text}}`,
-    `Translate into English:
-{{text}}`,
-    `Translate into Korean:
-{{text}}`,
-    `Please answer again what you just said in English.`,
-    `Please answer again what you just said in Korean.`,
-    `Below is the content of the research paper. Please summarize the contents in bullet point:
-{{text}}`,
+    `Summarize concisely in bullet point:\n{{text}}`,
+    `Explain the following in detail:\n{{text}}`,
+    `Correct the following sentence:\n{{text}}`,
+    `Translate into English:\n{{text}}`,
+    `Translate into Korean:\n{{text}}`,
+    `Find and fix bugs in the following code:\n{{text}}`,
+    `Please answer in English.`,
+    `Please answer in Korean.`,
+    `Please provide recent research topic or ideas related to `,
+    `Write a C/C++ code to `,
+    `Write a JavaScript code to `,
+    `Write a Python code to `,
+    `Write a Rust code to `,
 ];
 
 const text_summary_style = `
@@ -68,11 +45,11 @@ const text_summary_style = `
 }
 
 #text-summary-combo-list {
-    color: gray;
+    color: DodgerBlue;
 }
 
 #text-summary-prompt {
-    color: black;
+    color: IndianRed;
     height: 5em;
 }
 
@@ -122,10 +99,12 @@ function text_summary_change() {
 }
 
 async function text_summary_paste() {
+    // Check chatGPT text area.
     const chatgpt_textarea = document.querySelector("#prompt-textarea");
     if (chatgpt_textarea === null)
         return;
 
+    // Get prompt
     const prompt = document.querySelector("#text-summary-prompt").value;
     if (prompt.includes("{{text}}")) {
         let clipboardText = await navigator.clipboard.readText();
@@ -141,11 +120,15 @@ async function text_summary_paste() {
     var event = new Event("input", { bubbles: true, cancelable: true });
     chatgpt_textarea.dispatchEvent(event);
 
-    const button = document.querySelector("form.stretch button.absolute");
-    if (button) {
-        button.click();
+    // If the last char of prompt is not space character,
+    if (prompt.slice(-1) !== ' ') {
+        // Push the send button.
+        const button = document.querySelector("form.stretch button.absolute");
+        if (button)
+            button.click();
     }
 
+    // If popup is opened, close it.
     if (document.querySelector("#text-summary-popup-button").textContent === 'Prompt ▲')
         text_summary_open();
 }
