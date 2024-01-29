@@ -1,6 +1,6 @@
 const text_summary_options = [
-    `Summarize concisely in bullet point:\n{{text}}`,
-    `Explain the following in detail:\n{{text}}`,
+    `Please summarize the key points in bullets:\n{{text}}`,
+    `Please explain the following in detail:\n{{text}}`,
     `Correct the following sentence:\n{{text}}`,
     `Translate into English:\n{{text}}`,
     `Translate into Korean:\n{{text}}`,
@@ -60,7 +60,7 @@ const text_summary_style = `
 `;
 
 const text_summary_html = `
-<p style="text-align:right"><button id="text-summary-popup-button">Prompt ▼</button></p>
+<p style="text-align:right"><button id="text-summary-popup-button">Prompt (+)</button></p>
 <div id="text-summary-popup-container">
     <select id="text-summary-combo-list">
     </select>
@@ -75,11 +75,11 @@ function text_summary_open() {
     const button = document.querySelector("#text-summary-popup-button");
     const popup = document.querySelector("#text-summary-popup-container");
 
-    if (button.textContent === 'Prompt ▼') {
-        button.textContent = 'Prompt ▲';
+    if (button.textContent === 'Prompt (+)') {
+        button.textContent = 'Prompt (-)';
         popup.style.display = 'block';
     } else {
-        button.textContent = 'Prompt ▼';
+        button.textContent = 'Prompt (+)';
         popup.style.display = 'none';
     }
 }
@@ -129,7 +129,7 @@ async function text_summary_paste() {
     }
 
     // If popup is opened, close it.
-    if (document.querySelector("#text-summary-popup-button").textContent === 'Prompt ▲')
+    if (document.querySelector("#text-summary-popup-button").textContent === 'Prompt (-)')
         text_summary_open();
 }
 
