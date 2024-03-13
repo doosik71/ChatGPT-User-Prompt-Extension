@@ -2,6 +2,7 @@ const text_summary_options = [
     `Please summarize the key points in complete sentences using Markdown bullet style:\n{{text}}`,
     `Please summarize the key points as concisely as possible using Markdown bullet style:\n{{text}}`,
     `Please explain the following in detail:\n{{text}}`,
+    `Say the following sentences in descriptive form:\n{{text}}`,
     `Correct the following sentence:\n{{text}}`,
     `Translate into English:\n{{text}}`,
     `Translate into Korean:\n{{text}}`,
