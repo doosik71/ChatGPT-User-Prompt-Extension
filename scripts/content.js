@@ -1,21 +1,54 @@
-const text_summary_options = [
-    `Please summarize the key points in complete sentences using Markdown bullet style:\n{{text}}`,
-    `Please summarize the key points as concisely as possible using Markdown bullet style:\n{{text}}`,
-    `Please explain the following in detail:\n{{text}}`,
-    `Say the following sentences in descriptive form:\n{{text}}`,
-    `Highlight important sentences or words in the following sentences in Markdown format:\n{{text}}`,
-    `Correct the following sentence:\n{{text}}`,
-    `Translate into English:\n{{text}}`,
-    `Translate into Korean:\n{{text}}`,
+const cookie_name = 'chatgpt-text-summary-extension';
+
+const default_text_summary_options = [
+    `Please summarize the key points in complete sentences using Markdown bullet style.\n---\n{{text}}`,
+    `Please summarize the key points as concisely as possible using Markdown bullet style.\n---\n{{text}}`,
+    `Please explain the following in detail.\n---\n{{text}}`,
+    `Say the following sentences in descriptive form.\n---\n{{text}}`,
+    `Highlight important sentences or words in the following sentences in Markdown format.\n---\n{{text}}`,
+    `Correct the following sentence.\n---\n{{text}}`,
+    `Translate into English.\n---\n{{text}}`,
+    `Translate into Korean.\n---\n{{text}}`,
     `Please answer in English.`,
     `Please answer in Korean.`,
     `Please provide recent research topic or ideas related to `,
-    `Find and fix bugs in the following code:\n{{text}}`,
+    `Find and fix bugs in the following code.\n---\n{{text}}`,
     `Write a C/C++ code to `,
     `Write a JavaScript code to `,
     `Write a Python code to `,
     `Write a Rust code to `,
 ];
+
+function store_cookie(data) {
+    const cookieValue = btoa(encodeURIComponent(JSON.stringify(data)));
+    console.log('Cookie value:', cookieValue);
+
+    const date = new Date();
+    date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+    const expires = 'expires=' + date.toUTCString();
+
+    document.cookie = cookie_name + '=' + cookieValue + ';' + expires + ';path=/';
+}
+
+function retrieve_cookie() {
+    const cookies = document.cookie.split(';');
+    let cookieValue = null;
+
+    cookies.forEach(cookie => {
+        const [name, value] = cookie.trim().split('=');
+        if (name === cookie_name) {
+            cookieValue = value;
+        }
+    });
+
+    if (cookieValue) {
+        return JSON.parse(decodeURIComponent(atob(cookieValue)))
+    } else {
+        return default_text_summary_options;
+    }
+}
+
+var text_summary_options = retrieve_cookie();
 
 const text_summary_style = `
 #text-summary-panel {
@@ -25,7 +58,7 @@ const text_summary_style = `
     color: white;
 }
 
-#text-summary-popup-button, #text-summary-add-button, #text-summary-paste-button {
+#text-summary-popup-button, #text-summary-add-button, #text-summary-delete-button, #text-summary-paste-button {
     width: 6em;
     height: 2em;
     margin: 0.1em;
@@ -56,10 +89,9 @@ const text_summary_style = `
     height: 5em;
 }
 
-#text-summary-add-button {
+#text-summary-add-button, #text-summary-delete-button,  {
     vertical-align: top;
 }
-
 `;
 
 const text_summary_html = `
@@ -67,6 +99,7 @@ const text_summary_html = `
 <div id="text-summary-popup-container">
     <select id="text-summary-combo-list">
     </select>
+    <button id="text-summary-delete-button">Delete</button>
     <br/>
     <textarea id="text-summary-prompt" placeholder="New prompt..." spellcheck="false">${text_summary_options[0]}</textarea>
     <button id="text-summary-add-button">Add</button>
@@ -79,7 +112,7 @@ function text_summary_open() {
     const popup = document.querySelector("#text-summary-popup-container");
 
     if (button.textContent === 'Prompt (+)') {
-        button.textContent = 'Prompt (-)';
+        button.textContent = 'Close';
         popup.style.display = 'block';
     } else {
         button.textContent = 'Prompt (+)';
@@ -93,6 +126,19 @@ function text_summary_add() {
     document.querySelector("#text-summary-combo-list").add(newItem);
     document.querySelector("#text-summary-prompt").value = '';
     text_summary_autosize();
+
+    text_summary_options.push(newItem.text);
+    store_cookie(text_summary_options);
+}
+
+function text_summary_delete() {
+    var combo_list = document.querySelector("#text-summary-combo-list");
+    const index = combo_list.selectedIndex;
+
+    text_summary_options.splice(index, 1);
+    store_cookie(text_summary_options);
+
+    combo_list.remove(index);
 }
 
 function text_summary_change() {
@@ -161,6 +207,7 @@ function text_summary_init() {
     document.querySelector("#text-summary-popup-button").addEventListener("click", text_summary_open);
     document.querySelector("#text-summary-paste-button").addEventListener("click", text_summary_paste);
     document.querySelector("#text-summary-add-button").addEventListener("click", text_summary_add);
+    document.querySelector("#text-summary-delete-button").addEventListener("click", text_summary_delete);
     document.querySelector("#text-summary-combo-list").addEventListener("change", text_summary_change);
     document.querySelector("#text-summary-prompt").addEventListener("input", text_summary_autosize);
 
