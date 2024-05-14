@@ -59,11 +59,18 @@ const text_summary_style = `
 }
 
 #text-summary-popup-button, #text-summary-add-button, #text-summary-delete-button, #text-summary-paste-button {
-    width: 6em;
+    width: 7em;
     height: 2em;
     margin: 0.1em;
     color: white;
+}
+
+#text-summary-popup-button, #text-summary-add-button, #text-summary-paste-button {
     background: darkslategray;
+}
+
+#text-summary-delete-button {
+    background: red;
 }
 
 #text-summary-popup-container {
@@ -95,7 +102,7 @@ const text_summary_style = `
 `;
 
 const text_summary_html = `
-<p style="text-align:right"><button id="text-summary-popup-button">Prompt (+)</button></p>
+<p style="text-align:right"><button id="text-summary-popup-button">Open Prompt</button></p>
 <div id="text-summary-popup-container">
     <select id="text-summary-combo-list">
     </select>
@@ -111,11 +118,11 @@ function text_summary_open() {
     const button = document.querySelector("#text-summary-popup-button");
     const popup = document.querySelector("#text-summary-popup-container");
 
-    if (button.textContent === 'Prompt (+)') {
-        button.textContent = 'Close';
+    if (button.textContent === 'Open Prompt') {
+        button.textContent = 'Close Prompt';
         popup.style.display = 'block';
     } else {
-        button.textContent = 'Prompt (+)';
+        button.textContent = 'Open Prompt';
         popup.style.display = 'none';
     }
 }
@@ -172,13 +179,13 @@ async function text_summary_paste() {
     // If the last char of prompt is not space character,
     if (prompt.slice(-1) !== ' ') {
         // Push the send button.
-        const button = document.querySelector("form.stretch button.absolute");
+        const button = document.querySelector("form button.absolute");
         if (button)
             button.click();
     }
 
     // If popup is opened, close it.
-    if (document.querySelector("#text-summary-popup-button").textContent === 'Prompt (-)')
+    if (document.querySelector("#text-summary-popup-button").textContent === 'Close Prompt')
         text_summary_open();
 }
 

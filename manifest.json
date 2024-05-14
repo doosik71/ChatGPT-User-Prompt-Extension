@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ChatGPT Text Summary",
   "description": "ChatGPT Text Summary",
-  "version": "1.0",
+  "version": "1.1",
   "action": {
     "default_popup": "main.html",
     "default_icon": {
@@ -15,7 +15,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://chat.openai.com/*"
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*"
       ],
       "js": [
         "scripts/content.js"
