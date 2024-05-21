@@ -179,7 +179,7 @@ async function text_summary_paste() {
     // If the last char of prompt is not space character,
     if (prompt.slice(-1) !== ' ') {
         // Push the send button.
-        const button = document.querySelector("form button.absolute");
+        const button = document.querySelector("body main form button");
         if (button)
             button.click();
     }
