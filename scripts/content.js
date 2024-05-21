@@ -178,10 +178,12 @@ async function text_summary_paste() {
 
     // If the last char of prompt is not space character,
     if (prompt.slice(-1) !== ' ') {
-        // Push the send button.
-        const button = document.querySelector("body main form button");
-        if (button)
-            button.click();
+        // Find all buttons.
+        const buttons = document.querySelectorAll("body main form button");
+        if (buttons.length > 0) {
+            // Get last button and call click event.
+            buttons[buttons.length - 1].click();
+        }
     }
 
     // If popup is opened, close it.
