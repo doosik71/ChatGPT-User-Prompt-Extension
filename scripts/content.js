@@ -1,6 +1,7 @@
 const cookie_name = 'chatgpt-text-summary-extension';
 
 const default_text_summary_options = [
+    `Please summarize the content of the uploaded paper in detail, chapter by chapter. Each chapter should be explained thoroughly, and special attention should be given to the proposed method, which should be summarized in an easy-to-understand manner. Present the summary in Markdown bullet point format.`,
     `Please summarize the key points in complete sentences using Markdown bullet style.\n---\n{{text}}`,
     `Please summarize the key points as concisely as possible using Markdown bullet style.\n---\n{{text}}`,
     `Please explain the following in detail.\n---\n{{text}}`,
