@@ -1,7 +1,7 @@
-const cookie_name = 'chatgpt-text-summary-extension';
+const local_storage_key = 'chatgpt-text-summary-prompts';
 
 const default_text_summary_options = [
-    `Please summarize the content of the uploaded paper in detail, chapter by chapter. Each chapter should be explained thoroughly, and special attention should be given to the proposed method, which should be summarized in an easy-to-understand manner. Present the summary in Markdown bullet point format.`,
+    `Please summarize the content of the paper. The summary must provide a detailed and thorough explanation of each chapter and section of the paper, focusing on key concepts, methodologies, and challenges, along with relevant formulas and examples. The amount of the content should be sufficient for a comprehensive lecture on the paper. The markdown bullet point format is required and the formulas must use "$$" and "$" notation, not "\[", "\(".`,
     `Please summarize the key points in complete sentences using Markdown bullet style.\n---\n{{text}}`,
     `Please summarize the key points as concisely as possible using Markdown bullet style.\n---\n{{text}}`,
     `Please explain the following in detail.\n---\n{{text}}`,
@@ -20,36 +20,21 @@ const default_text_summary_options = [
     `Write a Rust code to `,
 ];
 
-function store_cookie(data) {
-    const cookieValue = btoa(encodeURIComponent(JSON.stringify(data)));
-    console.log('Cookie value:', cookieValue);
-
-    const date = new Date();
-    date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
-    const expires = 'expires=' + date.toUTCString();
-
-    document.cookie = cookie_name + '=' + cookieValue + ';' + expires + ';path=/';
+function store_to_local_storage(data) {
+    localStorage.setItem(local_storage_key, JSON.stringify(data));
 }
 
-function retrieve_cookie() {
-    const cookies = document.cookie.split(';');
-    let cookieValue = null;
-
-    cookies.forEach(cookie => {
-        const [name, value] = cookie.trim().split('=');
-        if (name === cookie_name) {
-            cookieValue = value;
-        }
-    });
-
-    if (cookieValue) {
-        return JSON.parse(decodeURIComponent(atob(cookieValue)))
+function retrieve_from_local_storage() {
+    const storedData = localStorage.getItem(local_storage_key);
+    if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        return parsedData.length > 0 ? parsedData : default_text_summary_options;
     } else {
         return default_text_summary_options;
     }
 }
 
-var text_summary_options = retrieve_cookie();
+var text_summary_options = retrieve_from_local_storage();
 
 const text_summary_style = `
 #text-summary-panel {
@@ -59,14 +44,14 @@ const text_summary_style = `
     color: white;
 }
 
-#text-summary-popup-button, #text-summary-add-button, #text-summary-delete-button, #text-summary-paste-button {
+#text-summary-popup-button, #text-summary-update-button, #text-summary-add-button, #text-summary-delete-button, #text-summary-paste-button {
     width: 7em;
     height: 2em;
     margin: 0.1em;
     color: white;
 }
 
-#text-summary-popup-button, #text-summary-add-button, #text-summary-paste-button {
+#text-summary-popup-button, #text-summary-update-button, #text-summary-add-button, #text-summary-paste-button {
     background: darkslategray;
 }
 
@@ -79,7 +64,24 @@ const text_summary_style = `
     border: 1px solid gray;
 }
 
-#text-summary-combo-list, #text-summary-prompt {
+#text-summary-combo-list{
+    background: floralwhite;
+    width: 40em;
+    max-width: 40em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#text-summary-combo-list option{
+    width: 40em;
+    max-width: 40em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#text-summary-prompt {
     background: floralwhite;
     width: 40em;
 }
@@ -97,7 +99,13 @@ const text_summary_style = `
     height: 5em;
 }
 
-#text-summary-add-button, #text-summary-delete-button,  {
+#button-container {
+    display: inline-block;
+    vertical-align: top;
+    // margin-left: 0.5em;
+}
+
+#text-summary-add-button, #text-summary-update-button, #text-summary-delete-button {
     vertical-align: top;
 }
 `;
@@ -105,9 +113,12 @@ const text_summary_style = `
 const text_summary_html = `
 <p style="text-align:right"><button id="text-summary-popup-button">Open Prompt</button></p>
 <div id="text-summary-popup-container">
-    <select id="text-summary-combo-list">
-    </select>
-    <button id="text-summary-delete-button">Delete</button>
+    <select id="text-summary-combo-list"></select>
+    <div id="button-container">
+        <button id="text-summary-update-button">Update</button>
+        <br/>
+        <button id="text-summary-delete-button">Delete</button>
+    </div>
     <br/>
     <textarea id="text-summary-prompt" placeholder="New prompt..." spellcheck="false">${text_summary_options[0]}</textarea>
     <button id="text-summary-add-button">Add</button>
@@ -136,7 +147,17 @@ function text_summary_add() {
     text_summary_autosize();
 
     text_summary_options.push(newItem.text);
-    store_cookie(text_summary_options);
+    store_to_local_storage(text_summary_options);
+}
+
+function text_summary_update() {
+    const combo_list = document.querySelector("#text-summary-combo-list");
+    const index = combo_list.selectedIndex;
+    if (index >= 0) {
+        combo_list.options[index].text = document.querySelector("#text-summary-prompt").value;
+        text_summary_options[index] = document.querySelector("#text-summary-prompt").value;
+        store_to_local_storage(text_summary_options);
+    }
 }
 
 function text_summary_delete() {
@@ -144,9 +165,11 @@ function text_summary_delete() {
     const index = combo_list.selectedIndex;
 
     text_summary_options.splice(index, 1);
-    store_cookie(text_summary_options);
+    store_to_local_storage(text_summary_options);
 
     combo_list.remove(index);
+    combo_list.selectedIndex = -1;
+    document.querySelector("#text-summary-prompt").value = "";
 }
 
 function text_summary_change() {
@@ -217,27 +240,28 @@ function text_summary_init() {
     document.querySelector("#text-summary-popup-button").addEventListener("click", text_summary_open);
     document.querySelector("#text-summary-paste-button").addEventListener("click", text_summary_paste);
     document.querySelector("#text-summary-add-button").addEventListener("click", text_summary_add);
+    document.querySelector("#text-summary-update-button").addEventListener("click", text_summary_update);
     document.querySelector("#text-summary-delete-button").addEventListener("click", text_summary_delete);
     document.querySelector("#text-summary-combo-list").addEventListener("change", text_summary_change);
     document.querySelector("#text-summary-prompt").addEventListener("input", text_summary_autosize);
 
     // Update combo list.
-    const combo_ist = document.querySelector("#text-summary-combo-list");
+    const combo_list = document.querySelector("#text-summary-combo-list");
 
     // Add default options.
     for (let i = 0; i < text_summary_options.length; i++) {
         const option = document.createElement('option');
         option.text = text_summary_options[i];
-        combo_ist.appendChild(option);
+        combo_list.appendChild(option);
     }
 
-    // add keydown event listner.
+    // add keydown event listener.
     document.addEventListener("keydown", function (event) {
         if (event.key !== "F9" && event.code !== "F9")
             return;
 
         text_summary_paste();
-    })
+    });
 }
 
 text_summary_init();
