@@ -1,4 +1,5 @@
-# ChatGPT Text Summary Extension
+# ChatGPT User Prompt Extension
 
-- Press [F9] to summarize text from clipboard.
+- Press [F9] to execute user prompt.
+- Prompt "{{text}}" is replaced with the clipboard text.
 - Install at <edge://extensions/>
