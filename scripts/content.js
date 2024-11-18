@@ -179,6 +179,10 @@ function text_summary_change() {
 }
 
 async function text_summary_paste() {
+    // If popup is opened, close it.
+    if (document.querySelector("#text-summary-popup-button").textContent === 'Close Prompt')
+        text_summary_open();
+
     // Check chatGPT text area.
     const chatgpt_textarea = document.querySelector("#prompt-textarea");
 
@@ -188,7 +192,8 @@ async function text_summary_paste() {
     }
 
     // Get prompt
-    const prompt = document.querySelector("#text-summary-prompt").value;
+    var prompt = document.querySelector("#text-summary-prompt").value;
+    const wait_propmt = prompt.endsWith(' ');
 
     if (prompt === null) {
         alert("No prompt menu found!");
@@ -202,53 +207,29 @@ async function text_summary_paste() {
             return;
         }
 
-        chatgpt_textarea.value = prompt.replace("{{text}}", clipboardText);
-    } else
-        chatgpt_textarea.value = prompt;
-
-    chatgpt_textarea.value = chatgpt_textarea.value;
-
-    if (chatgpt_textarea.hasChildNodes()) {
-        chatgpt_textarea.innerHTML = chatgpt_textarea.value;
+        prompt = prompt.replace("{{text}}", clipboardText);
     }
 
-    var inputEvent = new Event('input', { bubbles: true });
-    var changeEvent = new Event('change', { bubbles: true });
-
-    chatgpt_textarea.dispatchEvent(inputEvent);
-    chatgpt_textarea.dispatchEvent(changeEvent);
+    prompt = prompt.replace(/\r/g, '').split('\n').map(line => `<p>${line}</p>`).join('');
+    chatgpt_textarea.innerHTML = prompt
 
     // If the last char of prompt is not space character,
-    if (prompt.slice(-1) !== ' ') {
-        // Find all buttons.
-        const buttons = document.querySelectorAll("body main form button");
+    if (wait_propmt) {
+        return;
+    }
 
-        if (buttons.length === 0) {
-            alert("No button found!");
-            return;
-        }
+    // Find send button.
+    const button = document.querySelector('button[data-testid="send-button"]');
 
-        // Get last button and call click event.
-        const last_button = buttons[buttons.length - 1];
-        last_button.disabled = false;
-
-        setTimeout(() => {
-            // Double-check that the button is not disabled before clicking.
-            if (!last_button.disabled) {
-                last_button.click();
-            } else {
-                alert("Button is still disabled!");
-            }
-        }, 100); // Increase the delay if necessary.
-    } else {
+    if (!button) {
         alert("No button found!");
         return;
     }
 
-
-    // If popup is opened, close it.
-    if (document.querySelector("#text-summary-popup-button").textContent === 'Close Prompt')
-        text_summary_open();
+    setTimeout(() => {
+        const button = document.querySelector('button[data-testid="send-button"]');
+        button.click()
+    }, 100);
 }
 
 function text_summary_autosize() {

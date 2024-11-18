@@ -27,6 +27,9 @@
 
 ## Version History
 
+- v1.4.2
+  - Activate send button.
+
 - v1.4.1
   - Update README.
 
