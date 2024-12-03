@@ -218,13 +218,7 @@ async function text_summary_paste() {
         return;
     }
 
-    // Find send button.
-    const button = document.querySelector('button[data-testid="send-button"]');
-
-    if (!button) {
-        alert("No button found!");
-        return;
-    }
+    setTimeout(function() {}, 100);
 
     setTimeout(() => {
         const button = document.querySelector('button[data-testid="send-button"]');

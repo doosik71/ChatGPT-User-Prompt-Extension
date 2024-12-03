@@ -27,6 +27,9 @@
 
 ## Version History
 
+- v1.4.3
+  - Wait for the UI update before clicking send button.
+
 - v1.4.2
   - Activate send button.
 
