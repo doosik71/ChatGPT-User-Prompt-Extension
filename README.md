@@ -27,6 +27,9 @@
 
 ## Version History
 
+- v1.4.4
+  - Ensure prompt is treated as text.
+
 - v1.4.3
   - Wait for the UI update before clicking send button.
 
