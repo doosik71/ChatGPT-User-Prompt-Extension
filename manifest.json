@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ChatGPT User Prompt",
   "description": "ChatGPT User Prompt",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "action": {
     "default_popup": "main.html",
     "default_icon": {

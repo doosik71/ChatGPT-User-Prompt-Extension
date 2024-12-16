@@ -207,7 +207,8 @@ async function text_summary_paste() {
             return;
         }
 
-        prompt = prompt.replace("{{text}}", clipboardText);
+        // Ensure prompt is treated as text.
+        prompt = escapeHtml(prompt.replace("{{text}}", clipboardText));
     }
 
     prompt = prompt.replace(/\r/g, '').split('\n').map(line => `<p>${line}</p>`).join('');
@@ -224,6 +225,15 @@ async function text_summary_paste() {
         const button = document.querySelector('button[data-testid="send-button"]');
         button.click()
     }, 100);
+}
+
+function escapeHtml(str) {
+    const element = document.createElement('div');
+    if (str) {
+        element.innerText = str;
+        element.textContent = str;
+    }
+    return element.innerHTML;
 }
 
 function text_summary_autosize() {
