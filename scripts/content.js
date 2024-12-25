@@ -219,21 +219,25 @@ async function text_summary_paste() {
         return;
     }
 
-    setTimeout(function() {}, 100);
-
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         const button = document.querySelector('button[data-testid="send-button"]');
         button.click()
-    }, 100);
+    });
 }
 
 function escapeHtml(str) {
-    const element = document.createElement('div');
-    if (str) {
-        element.innerText = str;
-        element.textContent = str;
-    }
-    return element.innerHTML;
+    if (!str) return str;
+
+    return str.replace(/[&<>"']/g, function (match) {
+        switch (match) {
+            case '&': return '&amp;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '"': return '&quot;';
+            case "'": return '&#039;';
+            default: return match;
+        }
+    });
 }
 
 function text_summary_autosize() {

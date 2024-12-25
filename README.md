@@ -27,6 +27,9 @@
 
 ## Version History
 
+- v1.4.5
+  - Fix the error where dialogue disappears.
+
 - v1.4.4
   - Ensure prompt is treated as text.
 
