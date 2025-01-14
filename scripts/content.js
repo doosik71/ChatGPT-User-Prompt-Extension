@@ -212,7 +212,8 @@ async function text_summary_paste() {
     }
 
     prompt = prompt.replace(/\r/g, '').split('\n').map(line => `<p>${line}</p>`).join('');
-    chatgpt_textarea.innerHTML = prompt
+    chatgpt_textarea.focus();
+    chatgpt_textarea.innerHTML = prompt;
 
     // If the last char of prompt is not space character,
     if (wait_propmt) {

@@ -2,8 +2,8 @@
 
 ## Overview
 
-- This project implements a JavaScript-based tool to manage customizable text summary prompts for ChatGPT.
-- It allows users to store, update, and delete prompts in the browser's local storage and interactively paste those prompts into the ChatGPT input area.
+- This is a simple browser extension to manage and use custom text summary prompts for ChatGPT.
+- The extension allows users to store, update, and delete prompts in the browser's local storage and interactively paste those prompts into the ChatGPT input area.
 
 ## Features
 
@@ -13,46 +13,68 @@
 - **User Interface**: Includes buttons and a dropdown for managing prompts.
 - **Keyboard Shortcut**: Pressing `F9` triggers automatic pasting of the selected prompt.
 
-## How to Use
+## Usage
 
-1. **Open the Prompt Panel**: Click the `Open Prompt` button to manage your prompts.
-2. **Select a Prompt**: Choose an existing prompt from the dropdown, or create a new one by typing into the prompt textarea.
-3. **Paste the Prompt**: Click the `Paste [F9]` button or press `F9` to insert the selected prompt into ChatGPT’s input field.
-4. `Add`/`Update`/`Delete` **Prompts**: Use the corresponding buttons to modify your prompts. These changes are automatically saved to local storage.
-  
+Once installed, you will see a button labeled "Open Prompt" at the top right of your browser. Clicking this button opens a popup that lets you:
+
+- **Add a new prompt**: Add a custom summary prompt by typing into the text area and clicking "Add".
+- **Update an existing prompt**: Select a prompt from the dropdown, modify it, and click "Update".
+- **Delete a prompt**: Select a prompt from the dropdown and click "Delete".
+- **Paste text**: Use the "Paste [F9]" button to paste clipboard content into the currently selected prompt, automatically replacing `{{text}}` placeholders.
+
+### Example Prompts
+
+Here are some example prompts you can manage with this tool:
+
+```text
+Please explain the following in detail.
+---
+{{text}}
+```
+
+```text
+Please summarize the key points using Markdown bullet style.
+---
+{{text}}
+```
+
 ## Conclusion
 
 - This tool streamlines the process of managing and using predefined prompts within ChatGPT.
-- By leveraging local storage, dynamic UI elements, and prompt templates, users can efficiently interact with the chatbot, enhancing productivity for tasks like content summarization, code generation, and language translation.
+- By leveraging local storage, dynamic UI elements, and prompt templates, users can efficiently interact with ChatGPT, enhancing productivity for tasks like content summarization, code generation, and language translation.
 
 ## Version History
 
+- v1.4.6
+  - Set focus before updating the text.
+  - Updated the README.
+
 - v1.4.5
-  - Fix the error where dialogue disappears.
+  - Fixed an issue where the dialogue would disappear.
 
 - v1.4.4
-  - Ensure prompt is treated as text.
+  - Ensured the prompt is treated as text.
 
 - v1.4.3
-  - Wait for the UI update before clicking send button.
+  - Waited for UI update before clicking the send button.
 
 - v1.4.2
-  - Activate send button.
+  - Activated  send button.
 
 - v1.4.1
-  - Update README.
+  - Updated the README.
 
 - v1.4
-  - Fix `PASTE` script.
+  - Fix the `PASTE` script.
 
 - v1.3
-  - Update icon.
+  - Updated the icon.
 
 - v1.2
-  - Add update button.
+  - Added the update button.
 
 - v1.1
-  - Use cookie to store prompt.
+  - Used cookies to store prompts.
 
 - v1.0
   - First commit.
