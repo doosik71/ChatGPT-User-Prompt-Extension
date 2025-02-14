@@ -1,0 +1,19 @@
+[
+    "Please summarize the content of the paper. The summary must provide a detailed and thorough explanation of each chapter and section of the paper, focusing on key concepts, methodologies, and challenges, along with relevant formulas and examples. The amount of the content should be sufficient for a comprehensive lecture on the paper. The markdown bullet point format is required and the formulas must use \"$\" and \"$\" notation, not \"[\", \"(\".",
+    "Please summarize the key points in complete sentences using Markdown bullet style.\n---\n{{text}}",
+    "Please summarize the key points as concisely as possible using Markdown bullet style.\n---\n{{text}}",
+    "Please explain the following in detail.\n---\n{{text}}",
+    "Say the following sentences in descriptive form.\n---\n{{text}}",
+    "Highlight important sentences or words in the following sentences in Markdown format.\n---\n{{text}}",
+    "Correct the following sentence.\n---\n{{text}}",
+    "Translate into English.\n---\n{{text}}",
+    "Translate into Korean.\n---\n{{text}}",
+    "Please answer in English.",
+    "Please answer in Korean.",
+    "Please provide recent research topic or ideas related to ",
+    "Find and fix bugs in the following code.\n---\n{{text}}",
+    "Write a C/C++ code to ",
+    "Write a JavaScript code to ",
+    "Write a Python code to ",
+    "Write a Rust code to "
+]

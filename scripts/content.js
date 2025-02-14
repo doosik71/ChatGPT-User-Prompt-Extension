@@ -1,24 +1,18 @@
 const local_storage_key = 'chatgpt-text-summary-prompts';
 
-const default_text_summary_options = [
-    `Please summarize the content of the paper. The summary must provide a detailed and thorough explanation of each chapter and section of the paper, focusing on key concepts, methodologies, and challenges, along with relevant formulas and examples. The amount of the content should be sufficient for a comprehensive lecture on the paper. The markdown bullet point format is required and the formulas must use "$$" and "$" notation, not "\[", "\(".`,
-    `Please summarize the key points in complete sentences using Markdown bullet style.\n---\n{{text}}`,
-    `Please summarize the key points as concisely as possible using Markdown bullet style.\n---\n{{text}}`,
-    `Please explain the following in detail.\n---\n{{text}}`,
-    `Say the following sentences in descriptive form.\n---\n{{text}}`,
-    `Highlight important sentences or words in the following sentences in Markdown format.\n---\n{{text}}`,
-    `Correct the following sentence.\n---\n{{text}}`,
-    `Translate into English.\n---\n{{text}}`,
-    `Translate into Korean.\n---\n{{text}}`,
-    `Please answer in English.`,
-    `Please answer in Korean.`,
-    `Please provide recent research topic or ideas related to `,
-    `Find and fix bugs in the following code.\n---\n{{text}}`,
-    `Write a C/C++ code to `,
-    `Write a JavaScript code to `,
-    `Write a Python code to `,
-    `Write a Rust code to `,
-];
+let default_user_prompt_options = [];
+
+async function loadTextSummaryOptions() {
+    try {
+        const response = await fetch(chrome.runtime.getURL('user_prompt.json'));
+        if (response.ok)
+            default_user_prompt_options = await response.json();
+        else
+            default_user_prompt_options = [];
+    } catch (error) {
+        default_user_prompt_options = [];
+    }
+}
 
 function store_to_local_storage(data) {
     localStorage.setItem(local_storage_key, JSON.stringify(data));
@@ -28,160 +22,92 @@ function retrieve_from_local_storage() {
     const storedData = localStorage.getItem(local_storage_key);
     if (storedData) {
         const parsedData = JSON.parse(storedData);
-        return parsedData.length > 0 ? parsedData : default_text_summary_options;
+        return parsedData.length > 0 ? parsedData : default_user_prompt_options;
     } else {
-        return default_text_summary_options;
+        return default_user_prompt_options;
     }
 }
 
-var text_summary_options = retrieve_from_local_storage();
+var user_prompt_options = retrieve_from_local_storage();
 
-const text_summary_style = `
-#text-summary-panel {
-    position: fixed;
-    top: 5em;
-    right: 1em;
-    color: white;
+const user_prompt_style = ``;
+
+async function loadTextContent(element, url) {
+    try {
+        const response = await fetch(chrome.runtime.getURL(url));
+        if (response.ok)
+            element.textContent = await response.text();
+    } catch (error) {
+        console.error('Error loading HTML:', error);
+    }
 }
 
-#text-summary-popup-button, #text-summary-update-button, #text-summary-add-button, #text-summary-delete-button, #text-summary-paste-button {
-    width: 7em;
-    height: 2em;
-    margin: 0.1em;
-    color: white;
+async function loadInnerHTML(element, url) {
+    try {
+        const response = await fetch(chrome.runtime.getURL(url));
+        if (response.ok)
+            element.innerHTML = await response.text();
+    } catch (error) {
+        console.error('Error loading HTML:', error);
+    }
 }
 
-#text-summary-popup-button, #text-summary-update-button, #text-summary-add-button, #text-summary-paste-button {
-    background: darkslategray;
-}
-
-#text-summary-delete-button {
-    background: red;
-}
-
-#text-summary-popup-container {
-    display: none;
-    border: 1px solid gray;
-}
-
-#text-summary-combo-list{
-    background: floralwhite;
-    width: 40em;
-    max-width: 40em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#text-summary-combo-list option{
-    width: 40em;
-    max-width: 40em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#text-summary-prompt {
-    background: floralwhite;
-    width: 40em;
-}
-
-#text-summary-combo-list, #text-summary-combo-list option, #text-summary-prompt {
-    white-space: pre-wrap;
-}
-
-#text-summary-combo-list {
-    color: DodgerBlue;
-}
-
-#text-summary-prompt {
-    color: IndianRed;
-    height: 5em;
-}
-
-#button-container {
-    display: inline-block;
-    vertical-align: top;
-    // margin-left: 0.5em;
-}
-
-#text-summary-add-button, #text-summary-update-button, #text-summary-delete-button {
-    vertical-align: top;
-}
-`;
-
-const text_summary_html = `
-<p style="text-align:right"><button id="text-summary-popup-button">Open Prompt</button></p>
-<div id="text-summary-popup-container">
-    <select id="text-summary-combo-list"></select>
-    <div id="button-container">
-        <button id="text-summary-update-button">Update</button>
-        <br/>
-        <button id="text-summary-delete-button">Delete</button>
-    </div>
-    <br/>
-    <textarea id="text-summary-prompt" placeholder="New prompt..." spellcheck="false">${text_summary_options[0]}</textarea>
-    <button id="text-summary-add-button">Add</button>
-</div>
-<p style="text-align:right"><button id="text-summary-paste-button">Paste [F9]</button></p>
-`;
-
-function text_summary_open() {
+function user_prompt_open() {
     const button = document.querySelector("#text-summary-popup-button");
     const popup = document.querySelector("#text-summary-popup-container");
 
-    if (button.textContent === 'Open Prompt') {
-        button.textContent = 'Close Prompt';
+    if (button.textContent === '🔽') {
+        button.textContent = '🔼';
         popup.style.display = 'block';
     } else {
-        button.textContent = 'Open Prompt';
+        button.textContent = '🔽';
         popup.style.display = 'none';
     }
 }
 
-function text_summary_add() {
+function user_prompt_add() {
     const newItem = document.createElement('option');
     newItem.text = document.querySelector("#text-summary-prompt").value;
     document.querySelector("#text-summary-combo-list").add(newItem);
     document.querySelector("#text-summary-prompt").value = '';
-    text_summary_autosize();
+    user_prompt_autosize();
 
-    text_summary_options.push(newItem.text);
-    store_to_local_storage(text_summary_options);
+    user_prompt_options.push(newItem.text);
+    store_to_local_storage(user_prompt_options);
 }
 
-function text_summary_update() {
+function user_prompt_update() {
     const combo_list = document.querySelector("#text-summary-combo-list");
     const index = combo_list.selectedIndex;
     if (index >= 0) {
         combo_list.options[index].text = document.querySelector("#text-summary-prompt").value;
-        text_summary_options[index] = document.querySelector("#text-summary-prompt").value;
-        store_to_local_storage(text_summary_options);
+        user_prompt_options[index] = document.querySelector("#text-summary-prompt").value;
+        store_to_local_storage(user_prompt_options);
     }
 }
 
-function text_summary_delete() {
+function user_prompt_delete() {
     var combo_list = document.querySelector("#text-summary-combo-list");
     const index = combo_list.selectedIndex;
 
-    text_summary_options.splice(index, 1);
-    store_to_local_storage(text_summary_options);
+    user_prompt_options.splice(index, 1);
+    store_to_local_storage(user_prompt_options);
 
     combo_list.remove(index);
     combo_list.selectedIndex = -1;
     document.querySelector("#text-summary-prompt").value = "";
 }
 
-function text_summary_change() {
+function user_prompt_change() {
     const combo_list = document.querySelector("#text-summary-combo-list");
     document.querySelector("#text-summary-prompt").value = combo_list.options[combo_list.selectedIndex].innerHTML;
-    text_summary_autosize();
+    user_prompt_autosize();
 }
 
-async function text_summary_paste() {
+async function user_prompt_paste() {
     // If popup is opened, close it.
     if (document.querySelector("#text-summary-popup-button").textContent === 'Close Prompt')
-        text_summary_open();
+        user_prompt_open();
 
     // Check chatGPT text area.
     const chatgpt_textarea = document.querySelector("#prompt-textarea");
@@ -241,7 +167,7 @@ function escapeHtml(str) {
     });
 }
 
-function text_summary_autosize() {
+function user_prompt_autosize() {
     var el = document.querySelector("#text-summary-prompt");
 
     setTimeout(function () {
@@ -250,34 +176,22 @@ function text_summary_autosize() {
     }, 0);
 }
 
-function text_summary_init() {
-    // Add style.
-    const style = document.createElement('style');
-    style.textContent = text_summary_style;
-    document.head.appendChild(style);
-
-    // Insert html
-    const div = document.createElement('div');
-    div.id = "text-summary-panel";
-    div.innerHTML = text_summary_html;
-    document.body.appendChild(div);
-
-    // Register event handler.
-    document.querySelector("#text-summary-popup-button").addEventListener("click", text_summary_open);
-    document.querySelector("#text-summary-paste-button").addEventListener("click", text_summary_paste);
-    document.querySelector("#text-summary-add-button").addEventListener("click", text_summary_add);
-    document.querySelector("#text-summary-update-button").addEventListener("click", text_summary_update);
-    document.querySelector("#text-summary-delete-button").addEventListener("click", text_summary_delete);
-    document.querySelector("#text-summary-combo-list").addEventListener("change", text_summary_change);
-    document.querySelector("#text-summary-prompt").addEventListener("input", text_summary_autosize);
+function user_prompt_setup() {
+    document.querySelector("#text-summary-popup-button").addEventListener("click", user_prompt_open);
+    document.querySelector("#text-summary-paste-button").addEventListener("click", user_prompt_paste);
+    document.querySelector("#text-summary-add-button").addEventListener("click", user_prompt_add);
+    document.querySelector("#text-summary-update-button").addEventListener("click", user_prompt_update);
+    document.querySelector("#text-summary-delete-button").addEventListener("click", user_prompt_delete);
+    document.querySelector("#text-summary-combo-list").addEventListener("change", user_prompt_change);
+    document.querySelector("#text-summary-prompt").addEventListener("input", user_prompt_autosize);
 
     // Update combo list.
     const combo_list = document.querySelector("#text-summary-combo-list");
 
     // Add default options.
-    for (let i = 0; i < text_summary_options.length; i++) {
+    for (let i = 0; i < user_prompt_options.length; i++) {
         const option = document.createElement('option');
-        option.text = text_summary_options[i];
+        option.text = user_prompt_options[i];
         combo_list.appendChild(option);
     }
 
@@ -286,8 +200,25 @@ function text_summary_init() {
         if (event.key !== "F9" && event.code !== "F9")
             return;
 
-        text_summary_paste();
+        user_prompt_paste();
     });
 }
 
-text_summary_init();
+async function user_prompt_init() {
+    await loadTextSummaryOptions();
+
+    const style = document.createElement('style');
+    const div = document.createElement('div');
+    div.id = "text-summary-panel";
+
+    document.head.appendChild(style);
+    document.body.appendChild(div);
+
+    loadTextContent(style, 'user_prompt.css').then(() => {
+        loadInnerHTML(div, 'user_prompt.html').then(() => {
+            user_prompt_setup();
+        });
+    });
+}
+
+user_prompt_init();

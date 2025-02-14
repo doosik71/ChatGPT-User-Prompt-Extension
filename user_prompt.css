@@ -1,0 +1,58 @@
+#text-summary-panel {
+    position: fixed;
+    top: 5em;
+    right: 1em;
+}
+
+#text-summary-popup-container {
+    display: none;
+    border: 1px solid gray;
+}
+
+#text-summary-combo-list{
+    background: floralwhite;
+    width: 40em;
+    max-width: 40em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#text-summary-combo-list option{
+    width: 40em;
+    max-width: 40em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#text-summary-prompt {
+    background: floralwhite;
+    width: 40em;
+}
+
+#text-summary-combo-list,
+#text-summary-combo-list option,
+#text-summary-prompt {
+    white-space: pre-wrap;
+}
+
+#text-summary-combo-list {
+    color: DodgerBlue;
+}
+
+#text-summary-prompt {
+    color: IndianRed;
+    height: 5em;
+}
+
+#button-container {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#text-summary-add-button,
+#text-summary-update-button,
+#text-summary-delete-button {
+    vertical-align: top;
+}

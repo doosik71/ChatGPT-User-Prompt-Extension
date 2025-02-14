@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ChatGPT User Prompt",
   "description": "ChatGPT User Prompt",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "action": {
     "default_popup": "main.html",
     "default_icon": {
@@ -10,7 +10,18 @@
     }
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "*.css", "*.html", "*.json"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
+    }
   ],
   "content_scripts": [
     {
