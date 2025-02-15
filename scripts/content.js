@@ -1,36 +1,34 @@
 const local_storage_key = 'chatgpt-text-summary-prompts';
 
-let default_user_prompt_options = [];
+let user_prompt__default_options = [];
 
-async function loadTextSummaryOptions() {
+async function user_prompt__load_user_prompt_data() {
     try {
         const response = await fetch(chrome.runtime.getURL('user_prompt.json'));
         if (response.ok)
-            default_user_prompt_options = await response.json();
+            user_prompt__default_options = await response.json();
         else
-            default_user_prompt_options = [];
+            user_prompt__default_options = [];
     } catch (error) {
-        default_user_prompt_options = [];
+        user_prompt__default_options = [];
     }
 }
 
-function store_to_local_storage(data) {
+function user_prompt__store_to_local_storage(data) {
     localStorage.setItem(local_storage_key, JSON.stringify(data));
 }
 
-function retrieve_from_local_storage() {
+function user_prompt__retrieve_from_local_storage() {
     const storedData = localStorage.getItem(local_storage_key);
     if (storedData) {
         const parsedData = JSON.parse(storedData);
-        return parsedData.length > 0 ? parsedData : default_user_prompt_options;
+        return parsedData.length > 0 ? parsedData : user_prompt__default_options;
     } else {
-        return default_user_prompt_options;
+        return user_prompt__default_options;
     }
 }
 
-var user_prompt_options = retrieve_from_local_storage();
-
-const user_prompt_style = ``;
+var user_prompt__options = user_prompt__retrieve_from_local_storage();
 
 async function loadTextContent(element, url) {
     try {
@@ -42,7 +40,7 @@ async function loadTextContent(element, url) {
     }
 }
 
-async function loadInnerHTML(element, url) {
+async function user_prompt__load_inner_html(element, url) {
     try {
         const response = await fetch(chrome.runtime.getURL(url));
         if (response.ok)
@@ -52,62 +50,70 @@ async function loadInnerHTML(element, url) {
     }
 }
 
-function user_prompt_open() {
-    const button = document.querySelector("#text-summary-popup-button");
-    const popup = document.querySelector("#text-summary-popup-container");
+function user_prompt__open() {
+    const button = document.querySelector("#user-prompt-open-button");
+    const popup = document.querySelector("#user-prompt-popup-container");
 
-    if (button.textContent === '🔽') {
-        button.textContent = '🔼';
+    if (button.textContent === '⊞') {
+        button.textContent =   '⊟';
         popup.style.display = 'block';
     } else {
-        button.textContent = '🔽';
+        button.textContent = '⊞';
         popup.style.display = 'none';
     }
 }
 
-function user_prompt_add() {
+function user_prompt__add_button_click() {
     const newItem = document.createElement('option');
-    newItem.text = document.querySelector("#text-summary-prompt").value;
-    document.querySelector("#text-summary-combo-list").add(newItem);
-    document.querySelector("#text-summary-prompt").value = '';
-    user_prompt_autosize();
+    const prompt = document.querySelector("#user-prompt-user-input").value;
+    newItem.title = prompt;
+    newItem.text = prompt.split('\n')[0];
+    document.querySelector("#user-prompt-combo-list").add(newItem);
+    document.querySelector("#user-prompt-user-input").value = '';
+    user_prompt__autosize();
 
-    user_prompt_options.push(newItem.text);
-    store_to_local_storage(user_prompt_options);
+    user_prompt__options.push(prompt);
+    user_prompt__store_to_local_storage(user_prompt__options);
 }
 
-function user_prompt_update() {
-    const combo_list = document.querySelector("#text-summary-combo-list");
+function user_prompt__update_button_click() {
+    const combo_list = document.querySelector("#user-prompt-combo-list");
     const index = combo_list.selectedIndex;
     if (index >= 0) {
-        combo_list.options[index].text = document.querySelector("#text-summary-prompt").value;
-        user_prompt_options[index] = document.querySelector("#text-summary-prompt").value;
-        store_to_local_storage(user_prompt_options);
+        const prompt = document.querySelector("#user-prompt-user-input").value;
+        combo_list.options[index].title = prompt;
+        combo_list.options[index].text = prompt.split('\n')[0];
+        user_prompt__options[index] = prompt;
+        user_prompt__store_to_local_storage(user_prompt__options);
     }
 }
 
-function user_prompt_delete() {
-    var combo_list = document.querySelector("#text-summary-combo-list");
+function user_prompt__delete_button_click() {
+    var combo_list = document.querySelector("#user-prompt-combo-list");
     const index = combo_list.selectedIndex;
 
-    user_prompt_options.splice(index, 1);
-    store_to_local_storage(user_prompt_options);
+    user_prompt__options.splice(index, 1);
+    user_prompt__store_to_local_storage(user_prompt__options);
 
     combo_list.remove(index);
     combo_list.selectedIndex = -1;
-    document.querySelector("#text-summary-prompt").value = "";
+    document.querySelector("#user-prompt-user-input").value = "";
 }
 
-function user_prompt_change() {
-    const combo_list = document.querySelector("#text-summary-combo-list");
-    document.querySelector("#text-summary-prompt").value = combo_list.options[combo_list.selectedIndex].innerHTML;
-    user_prompt_autosize();
+function user_prompt__combo_list_change() {
+    const combo_list = document.querySelector("#user-prompt-combo-list");
+    const selected_option = combo_list.options[combo_list.selectedIndex];
+    console.log(selected_option);
+    console.log(selected_option.title);
+    console.log(selected_option.innerHTML);
+    document.querySelector("#user-prompt-user-input").value = selected_option.title;
+    user_prompt__autosize();
 }
 
-async function user_prompt_paste() {
+async function user_prompt__paste_button_click() {
     // If popup is opened, close it.
-    if (document.querySelector("#text-summary-popup-button").textContent === 'Close Prompt')
-        user_prompt_open();
+    if (document.querySelector("#user-prompt-open-button").textContent === 'Close Prompt')
+        user_prompt__open();
 
     // Check chatGPT text area.
     const chatgpt_textarea = document.querySelector("#prompt-textarea");
@@ -118,7 +124,7 @@ async function user_prompt_paste() {
     }
 
     // Get prompt
-    var prompt = document.querySelector("#text-summary-prompt").value;
+    var prompt = document.querySelector("#user-prompt-user-input").value;
     const wait_propmt = prompt.endsWith(' ');
 
     if (prompt === null) {
@@ -134,7 +140,7 @@ async function user_prompt_paste() {
         }
 
         // Ensure prompt is treated as text.
-        prompt = escapeHtml(prompt.replace("{{text}}", clipboardText));
+        prompt = user_prompt__escape_html(prompt.replace("{{text}}", clipboardText));
     }
 
     prompt = prompt.replace(/\r/g, '').split('\n').map(line => `<p>${line}</p>`).join('');
@@ -152,7 +158,7 @@ async function user_prompt_paste() {
     });
 }
 
-function escapeHtml(str) {
+function user_prompt__escape_html(str) {
     if (!str) return str;
 
     return str.replace(/[&<>"']/g, function (match) {
@@ -167,8 +173,8 @@ function escapeHtml(str) {
     });
 }
 
-function user_prompt_autosize() {
-    var el = document.querySelector("#text-summary-prompt");
+function user_prompt__autosize() {
+    var el = document.querySelector("#user-prompt-user-input");
 
     setTimeout(function () {
         el.style.cssText = 'height:auto;';
@@ -176,22 +182,29 @@ function user_prompt_autosize() {
     }, 0);
 }
 
-function user_prompt_setup() {
-    document.querySelector("#text-summary-popup-button").addEventListener("click", user_prompt_open);
-    document.querySelector("#text-summary-paste-button").addEventListener("click", user_prompt_paste);
-    document.querySelector("#text-summary-add-button").addEventListener("click", user_prompt_add);
-    document.querySelector("#text-summary-update-button").addEventListener("click", user_prompt_update);
-    document.querySelector("#text-summary-delete-button").addEventListener("click", user_prompt_delete);
-    document.querySelector("#text-summary-combo-list").addEventListener("change", user_prompt_change);
-    document.querySelector("#text-summary-prompt").addEventListener("input", user_prompt_autosize);
+function user_prompt__setup() {
+    const eventMap = {
+        "user-prompt-open-button": ["click", user_prompt__open],
+        "user-prompt-paste-button": ["click", user_prompt__paste_button_click],
+        "user-prompt-add-button": ["click", user_prompt__add_button_click],
+        "user-prompt-update-button": ["click", user_prompt__update_button_click],
+        "user-prompt-delete-button": ["click", user_prompt__delete_button_click],
+        "user-prompt-combo-list": ["change", user_prompt__combo_list_change],
+        "user-prompt-user-input": ["input", user_prompt__autosize]
+    };
+
+    for (let id in eventMap)
+        document.querySelector('#' + id).addEventListener(eventMap[id][0], eventMap[id][1]);
 
     // Update combo list.
-    const combo_list = document.querySelector("#text-summary-combo-list");
+    const combo_list = document.querySelector("#user-prompt-combo-list");
 
     // Add default options.
-    for (let i = 0; i < user_prompt_options.length; i++) {
+    for (let i = 0; i < user_prompt__options.length; i++) {
+        const prompt = user_prompt__options[i];
         const option = document.createElement('option');
-        option.text = user_prompt_options[i];
+        option.title = prompt;
+        option.text = prompt.split('\n')[0];
         combo_list.appendChild(option);
     }
 
@@ -200,25 +213,23 @@ function user_prompt_setup() {
         if (event.key !== "F9" && event.code !== "F9")
             return;
 
-        user_prompt_paste();
+        user_prompt__paste_button_click();
     });
 }
 
-async function user_prompt_init() {
-    await loadTextSummaryOptions();
+async function user_prompt__init() {
+    await user_prompt__load_user_prompt_data();
 
     const style = document.createElement('style');
     const div = document.createElement('div');
-    div.id = "text-summary-panel";
+
+    await loadTextContent(style, 'user_prompt.css');
+    await user_prompt__load_inner_html(div, 'user_prompt.html');
 
     document.head.appendChild(style);
     document.body.appendChild(div);
 
-    loadTextContent(style, 'user_prompt.css').then(() => {
-        loadInnerHTML(div, 'user_prompt.html').then(() => {
-            user_prompt_setup();
-        });
-    });
+    user_prompt__setup();
 }
 
-user_prompt_init();
+user_prompt__init();

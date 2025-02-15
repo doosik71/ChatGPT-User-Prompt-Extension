@@ -1,58 +1,50 @@
-#text-summary-panel {
+div#user-prompt-panel {
     position: fixed;
-    top: 5em;
-    right: 1em;
+    right: 1.8em;
+    top: 3.5em;
 }
 
-#text-summary-popup-container {
+div#user-prompt-menubar {
+    text-align: right;
+}
+
+div#user-prompt-popup-container {
+    background: floralwhite;
+    border: 1px solid lightgray;
     display: none;
-    border: 1px solid gray;
+    max-width: 50em;
+    padding: 0.2em;
+    width: 50em;
 }
 
-#text-summary-combo-list{
-    background: floralwhite;
-    width: 40em;
-    max-width: 40em;
+button#user-prompt-open-button {
+    color: gray;
+}
+
+select#user-prompt-combo-list {
+    color: gray;
     overflow: hidden;
+    padding: 0.1em;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 100%;
 }
 
-#text-summary-combo-list option{
-    width: 40em;
-    max-width: 40em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+select#user-prompt-combo-list option {
+    color: gray;
 }
 
-#text-summary-prompt {
-    background: floralwhite;
-    width: 40em;
+div#user-prompt-button-container {
+    text-align: right;
+    width: 100%;
 }
 
-#text-summary-combo-list,
-#text-summary-combo-list option,
-#text-summary-prompt {
-    white-space: pre-wrap;
+textarea#user-prompt-user-input {
+    padding: 0.1em;
+    width: 100%;
 }
 
-#text-summary-combo-list {
-    color: DodgerBlue;
-}
-
-#text-summary-prompt {
-    color: IndianRed;
-    height: 5em;
-}
-
-#button-container {
-    display: inline-block;
-    vertical-align: top;
-}
-
-#text-summary-add-button,
-#text-summary-update-button,
-#text-summary-delete-button {
-    vertical-align: top;
+textarea#user-prompt-user-input {
+    color: dodgerblue;
+    height: 10em;
 }
