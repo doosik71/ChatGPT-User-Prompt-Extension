@@ -12,9 +12,8 @@ div#user-prompt-popup-container {
     background: floralwhite;
     border: 1px solid lightgray;
     display: none;
-    max-width: 50em;
+    min-width: 20em;
     padding: 0.2em;
-    width: 50em;
 }
 
 button#user-prompt-open-button {

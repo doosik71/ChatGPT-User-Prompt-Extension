@@ -1,16 +1,16 @@
 const local_storage_key = 'chatgpt-text-summary-prompts';
 
 let user_prompt__default_options = [];
+var user_prompt__options = [];
 
-async function user_prompt__load_user_prompt_data() {
+async function user_prompt__load_default_prompt() {
     try {
         const response = await fetch(chrome.runtime.getURL('user_prompt.json'));
-        if (response.ok)
+        if (response.ok) {
             user_prompt__default_options = await response.json();
-        else
-            user_prompt__default_options = [];
+            return;
+        }
     } catch (error) {
-        user_prompt__default_options = [];
     }
 }
 
@@ -22,13 +22,12 @@ function user_prompt__retrieve_from_local_storage() {
     const storedData = localStorage.getItem(local_storage_key);
     if (storedData) {
         const parsedData = JSON.parse(storedData);
-        return parsedData.length > 0 ? parsedData : user_prompt__default_options;
-    } else {
-        return user_prompt__default_options;
+        if (parsedData.length > 0)
+            return parsedData;
     }
-}
 
-var user_prompt__options = user_prompt__retrieve_from_local_storage();
+    return user_prompt__default_options;
+}
 
 async function loadTextContent(element, url) {
     try {
@@ -112,7 +111,7 @@ function user_prompt__combo_list_change() {
 
 async function user_prompt__paste_button_click() {
     // If popup is opened, close it.
-    if (document.querySelector("#user-prompt-open-button").textContent === 'Close Prompt')
+    if (document.querySelector("#user-prompt-open-button").textContent === '⊟')
         user_prompt__open();
 
     // Check chatGPT text area.
@@ -139,7 +138,6 @@ async function user_prompt__paste_button_click() {
             return;
         }
 
-        // Ensure prompt is treated as text.
         prompt = user_prompt__escape_html(prompt.replace("{{text}}", clipboardText));
     }
 
@@ -147,7 +145,6 @@ async function user_prompt__paste_button_click() {
     chatgpt_textarea.focus();
     chatgpt_textarea.innerHTML = prompt;
 
-    // If the last char of prompt is not space character,
     if (wait_propmt) {
         return;
     }
@@ -218,7 +215,9 @@ function user_prompt__setup() {
 }
 
 async function user_prompt__init() {
-    await user_prompt__load_user_prompt_data();
+    user_prompt__options = user_prompt__retrieve_from_local_storage();
+
+    await user_prompt__load_default_prompt();
 
     const style = document.createElement('style');
     const div = document.createElement('div');
