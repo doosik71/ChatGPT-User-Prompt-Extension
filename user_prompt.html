@@ -1,17 +1,33 @@
 <div id="user-prompt-panel">
     <div id="user-prompt-menubar">
-        <button id="user-prompt-paste-button" title="Press [F9] to execute the selected prompt">▶️</button>
+        <button id="user-prompt-paste-button" title="Press [F9] to execute the selected prompt">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="4,4 12,10 4,16" fill="dodgerblue"/>
+            </svg>
+        </button>
         <button id="user-prompt-open-button" title="Show/hide the prompt menu">⊞</button>
     </div>
     <div id="user-prompt-popup-container">
         <select id="user-prompt-combo-list"></select>
         <div id="user-prompt-button-container">
-            <button id="user-prompt-delete-button" title="Delete prompt">🚮</button>
+            <button id="user-prompt-delete-button" title="Delete prompt">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 5L13 15M13 5L3 15" stroke="red" stroke-width="2"/>
+                </svg>
+            </button>
         </div>
         <textarea id="user-prompt-user-input" placeholder="New prompt..." spellcheck="false"></textarea>
         <div id="user-prompt-button-container">
-            <button id="user-prompt-update-button" title="Update prompt">🔄</button>
-            <button id="user-prompt-add-button" title="Add prompt">🆕</button>
+            <button id="user-prompt-update-button" title="Update prompt">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 13V15H4L12 7L10 5L2 13Z" fill="dodgerblue"/>
+                </svg>
+            </button>
+            <button id="user-prompt-add-button" title="Add prompt">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 4V9H2V11H7V16H9V11H14V9H9V4H7Z" fill="dodgerblue"/>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
