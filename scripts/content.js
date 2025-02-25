@@ -102,9 +102,6 @@ function user_prompt__delete_button_click() {
 function user_prompt__combo_list_change() {
     const combo_list = document.querySelector("#user-prompt-combo-list");
     const selected_option = combo_list.options[combo_list.selectedIndex];
-    console.log(selected_option);
-    console.log(selected_option.title);
-    console.log(selected_option.innerHTML);
     document.querySelector("#user-prompt-user-input").value = selected_option.title;
     user_prompt__autosize();
 }
@@ -173,10 +170,10 @@ function user_prompt__escape_html(str) {
 function user_prompt__autosize() {
     var el = document.querySelector("#user-prompt-user-input");
 
-    setTimeout(function () {
+    requestAnimationFrame(() => {
         el.style.cssText = 'height:auto;';
         el.style.cssText = 'height: ' + el.scrollHeight + 'px';
-    }, 0);
+    });
 }
 
 function user_prompt__setup() {
@@ -203,6 +200,11 @@ function user_prompt__setup() {
         option.title = prompt;
         option.text = prompt.split('\n')[0];
         combo_list.appendChild(option);
+    }
+
+    if (user_prompt__options.length > 0) {
+        combo_list.selectedIndex = 0;
+        user_prompt__combo_list_change();
     }
 
     // add keydown event listener.

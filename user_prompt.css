@@ -41,6 +41,7 @@ div#user-prompt-button-container {
 textarea#user-prompt-user-input {
     padding: 0.1em;
     width: 100%;
+    min-height: 5em;
 }
 
 textarea#user-prompt-user-input {
