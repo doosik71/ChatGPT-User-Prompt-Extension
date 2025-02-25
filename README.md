@@ -15,6 +15,12 @@
 
 ## Usage
 
+- This extension operates on chatgpt.com.
+- Press "⊞" button on the right top corner to open prompt panel.
+- Select a prompt to execute.
+- You must have text in clipboard to paste into {{text}}.
+- Press "▶️" button to execute prompt.
+
 Once installed, you will see a button labeled "Open Prompt" at the top right of your browser. Clicking this button opens a popup that lets you:
 
 - **Add a new prompt**: Add a custom summary prompt by typing into the text area and clicking "Add".
@@ -44,6 +50,9 @@ Please summarize the key points using Markdown bullet style.
 - By leveraging local storage, dynamic UI elements, and prompt templates, users can efficiently interact with ChatGPT, enhancing productivity for tasks like content summarization, code generation, and language translation.
 
 ## Version History
+
+- v1.4.7
+  - Update UI, icons, and README.
 
 - v1.4.6
   - Set focus before updating the text.
