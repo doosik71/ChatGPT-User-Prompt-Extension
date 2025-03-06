@@ -18,15 +18,16 @@
 - This extension operates on chatgpt.com.
 - Press "⊞" button on the right top corner to open prompt panel.
 - Select a prompt to execute.
-- You must have text in clipboard to paste into {{text}}.
+- You must have text in clipboard to paste into "{{text}}".
 - Press "▶️" button to execute prompt.
+- If the prompt ends with a ' ' (space character), automatic execution is disabled and it waits for the user's additional input.
 
 Once installed, you will see a button labeled "Open Prompt" at the top right of your browser. Clicking this button opens a popup that lets you:
 
-- **Add a new prompt**: Add a custom summary prompt by typing into the text area and clicking "Add".
-- **Update an existing prompt**: Select a prompt from the dropdown, modify it, and click "Update".
-- **Delete a prompt**: Select a prompt from the dropdown and click "Delete".
-- **Paste text**: Use the "Paste [F9]" button to paste clipboard content into the currently selected prompt, automatically replacing `{{text}}` placeholders.
+- **Add a new prompt**: Add a custom summary prompt by typing into the text area and clicking "Add \[➕]".
+- **Update an existing prompt**: Select a prompt from the dropdown, modify it, and click "Update \[🖊️]".
+- **Delete a prompt**: Select a prompt from the dropdown and click "Delete \[❌]".
+- **Paste text**: Use the "Paste \[▶️]" button to paste clipboard content into the currently selected prompt, automatically replacing `{{text}}` placeholders.
 
 ### Example Prompts
 
