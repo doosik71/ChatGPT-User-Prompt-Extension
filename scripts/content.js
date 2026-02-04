@@ -53,11 +53,11 @@ function user_prompt__open() {
     const button = document.querySelector("#user-prompt-open-button");
     const popup = document.querySelector("#user-prompt-popup-container");
 
-    if (button.textContent === '⊞') {
-        button.textContent =   '⊟';
+    if (button.textContent === '☰') {
+        button.textContent = '≡';
         popup.style.display = 'block';
     } else {
-        button.textContent = '⊞';
+        button.textContent = '☰';
         popup.style.display = 'none';
     }
 }
@@ -108,7 +108,7 @@ function user_prompt__combo_list_change() {
 
 async function user_prompt__paste_button_click() {
     // If popup is opened, close it.
-    if (document.querySelector("#user-prompt-open-button").textContent === '⊟')
+    if (document.querySelector("#user-prompt-open-button").textContent === '≡')
         user_prompt__open();
 
     // Check chatGPT text area.
@@ -127,7 +127,7 @@ async function user_prompt__paste_button_click() {
         alert("No prompt menu found!");
         return;
     }
-    
+
     if (prompt.includes("{{text}}")) {
         let clipboardText = await navigator.clipboard.readText();
         if (clipboardText === null) {

@@ -52,6 +52,9 @@ Please summarize the key points using Markdown bullet style.
 
 ## Version History
 
+- v1.4.9
+  - Update button style.
+
 - v1.4.7
   - Update UI, icons, and README.
 

@@ -1,14 +1,18 @@
 div#user-prompt-panel {
+    text-align: right;
     position: fixed;
     right: 1.2em;
-    top: 3.5em;
+    top: 3.8em;
+    z-index: 1000;
 }
 
-div#user-prompt-menubar {
-    text-align: right;
+div#user-prompt-panel div#user-prompt-menubar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
-div#user-prompt-popup-container {
+div#user-prompt-panel div#user-prompt-popup-container {
     background: floralwhite;
     border: 1px solid lightgray;
     display: none;
@@ -16,11 +20,36 @@ div#user-prompt-popup-container {
     padding: 0.2em;
 }
 
-button#user-prompt-open-button {
+div#user-prompt-panel button {
+    background: transparent;
+    border: none;
+    padding: 0 0.3em;
+    font-size: 1em;
+    height: 1.5em;
+    cursor: pointer;
+}
+
+div#user-prompt-panel button#user-prompt-paste-button {
+    color: dodgerblue;
+    font-size: 0.8em;
+}
+
+div#user-prompt-panel button#user-prompt-open-button {
     color: gray;
 }
 
-select#user-prompt-combo-list {
+div#user-prompt-panel button#user-prompt-delete-button {
+    color: red;
+    font-size: 0.7em;
+}
+
+div#user-prompt-panel button#user-prompt-update-button,
+div#user-prompt-panel button#user-prompt-add-button {
+    color: dodgerblue;
+    font-size: 0.7em;
+}
+
+div#user-prompt-panel select#user-prompt-combo-list {
     color: gray;
     overflow: hidden;
     padding: 0.1em;
@@ -29,22 +58,20 @@ select#user-prompt-combo-list {
     width: 100%;
 }
 
-select#user-prompt-combo-list option {
+div#user-prompt-panel select#user-prompt-combo-list option {
     color: gray;
 }
 
-div#user-prompt-button-container {
+div#user-prompt-panel div#user-prompt-button-container {
     text-align: right;
     width: 100%;
 }
 
-textarea#user-prompt-user-input {
+div#user-prompt-panel textarea#user-prompt-user-input {
     padding: 0.1em;
     width: 100%;
     min-height: 5em;
-}
-
-textarea#user-prompt-user-input {
     color: dodgerblue;
     height: 10em;
+    margin-top: 0.2em;
 }
