@@ -1,33 +1,47 @@
 <div id="user-prompt-panel">
     <div id="user-prompt-menubar">
-        <button id="user-prompt-paste-button" title="Press [F9] to execute the selected prompt">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="4,4 12,10 4,16" fill="dodgerblue"/>
+        <button id="user-prompt-paste-button" class="up-btn up-btn--primary" title="Press [F9] to execute the selected prompt" aria-label="Execute selected prompt">
+            <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M4 3.5L12 8L4 12.5V3.5Z" />
             </svg>
         </button>
-        <button id="user-prompt-open-button" title="Show/hide the prompt menu">⊞</button>
+        <button id="user-prompt-open-button" class="up-btn up-btn--ghost" title="Show/hide the prompt menu" aria-label="Show or hide the prompt panel" aria-expanded="false">
+            <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M2.5 6H13.5M2.5 10H13.5" />
+            </svg>
+        </button>
     </div>
     <div id="user-prompt-popup-container">
-        <select id="user-prompt-combo-list"></select>
-        <div id="user-prompt-button-container">
-            <button id="user-prompt-delete-button" title="Delete prompt">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 5L13 15M13 5L3 15" stroke="red" stroke-width="2"/>
-                </svg>
-            </button>
+        <div id="user-prompt-header">
+            <div id="user-prompt-title">Prompt Manager</div>
+            <div id="user-prompt-count" aria-live="polite">0 prompts</div>
         </div>
-        <textarea id="user-prompt-user-input" placeholder="New prompt..." spellcheck="false"></textarea>
-        <div id="user-prompt-button-container">
-            <button id="user-prompt-update-button" title="Update prompt">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 13V15H4L12 7L10 5L2 13Z" fill="dodgerblue"/>
-                </svg>
-            </button>
-            <button id="user-prompt-add-button" title="Add prompt">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 4V9H2V11H7V16H9V11H14V9H9V4H7Z" fill="dodgerblue"/>
-                </svg>
-            </button>
+        <div id="user-prompt-search">
+            <input id="user-prompt-search-input" type="text" placeholder="Search prompts..." spellcheck="false" />
         </div>
+        <div id="user-prompt-list" role="listbox" aria-label="Prompt list">
+            <div id="user-prompt-items"></div>
+        </div>
+        <div id="user-prompt-editor">
+            <textarea id="user-prompt-user-input" placeholder="New prompt..." spellcheck="false"></textarea>
+        </div>
+        <div id="user-prompt-actions">
+            <div class="up-actions-left">
+                <button id="user-prompt-update-button" class="up-btn up-btn--solid" title="Update prompt" aria-label="Update selected prompt">
+                    <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M3 13.5H5.5L12.2 6.8L9.2 3.8L2.5 10.5V13.5Z" />
+                        <path d="M8.8 4.2L11.8 7.2" />
+                    </svg>
+                    Update
+                </button>
+                <button id="user-prompt-add-button" class="up-btn up-btn--solid" title="Add prompt" aria-label="Add new prompt">
+                    <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M8 3V13M3 8H13" />
+                    </svg>
+                    Add
+                </button>
+            </div>
+        </div>
+        <div id="user-prompt-hint">Templates: <span class="up-mono">{{text}}</span>, <span class="up-mono">{{clipboard}}</span>, <span class="up-mono">{{selection}}</span></div>
     </div>
 </div>

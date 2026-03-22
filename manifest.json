@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ChatGPT User Prompt",
   "description": "ChatGPT User Prompt",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "action": {
     "default_popup": "main.html",
     "default_icon": {
@@ -19,7 +19,8 @@
         "*.css", "*.html", "*.json"
       ],
       "matches": [
-        "*://*/*"
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
       ]
     }
   ],
