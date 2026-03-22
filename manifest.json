@@ -9,10 +9,7 @@
       "16": "images/icon.png"
     }
   },
-  "permissions": [
-    "activeTab",
-    "storage"
-  ],
+  "permissions": ["activeTab", "storage"],
   "web_accessible_resources": [
     {
       "resources": [
@@ -26,13 +23,8 @@
   ],
   "content_scripts": [
     {
-      "matches": [
-        "https://chat.openai.com/*",
-        "https://chatgpt.com/*"
-      ],
-      "js": [
-        "scripts/content.js"
-      ]
+      "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
+      "js": ["scripts/content.js"]
     }
   ]
 }

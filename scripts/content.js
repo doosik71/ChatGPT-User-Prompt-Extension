@@ -391,10 +391,10 @@ function user_prompt__autosize() {
     const el = user_prompt__qs("#user-prompt-user-input");
     if (!el) return;
 
-    setTimeout(function () {
+    requestAnimationFrame(() => {
         el.style.cssText = 'height:auto;';
         el.style.cssText = 'height: ' + el.scrollHeight + 'px';
-    }, 0);
+    });
 }
 
 function user_prompt__setup() {
@@ -435,6 +435,11 @@ function user_prompt__setup() {
                 user_prompt__move_prompt(fromIndex, toIndex);
             }
         });
+    }
+
+    if (user_prompt__options.length > 0) {
+        combo_list.selectedIndex = 0;
+        user_prompt__combo_list_change();
     }
 
     // add keydown event listener.
