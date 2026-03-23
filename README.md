@@ -52,16 +52,14 @@ Please summarize the key points using Markdown bullet style.
 
 ## Version History
 
-- v1.4.9
-  - Make the menu button vertically draggable with persisted position.
-  - Add a resizable prompt panel width with persisted size.
-  - Refine the prompt action row layout.
-
-- v1.4.8
+- v1.5.0
   - Update UI/UX layout.
   - Add custom list with per-item delete and drag-and-drop reorder.
   - Improve dark/light theming and scroll behavior.
   - Show version via external script in popup.
+
+- v1.4.9
+  - Update button style.
 
 - v1.4.7
   - Update UI, icons, and README.

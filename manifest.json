@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ChatGPT User Prompt",
   "description": "ChatGPT User Prompt",
-  "version": "1.4.9",
+  "version": "1.5.0",
   "action": {
     "default_popup": "main.html",
     "default_icon": {
@@ -13,12 +13,12 @@
   "web_accessible_resources": [
     {
       "resources": ["*.css", "*.html", "*.json"],
-      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"]
+      "matches": ["https://chatgpt.com/*"]
     }
   ],
   "content_scripts": [
     {
-      "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
+      "matches": ["https://chatgpt.com/*"],
       "js": ["scripts/content.js"]
     }
   ]
