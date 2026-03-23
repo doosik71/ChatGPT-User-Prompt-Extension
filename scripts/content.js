@@ -1,4 +1,10 @@
 const local_storage_key = 'chatgpt-text-summary-prompts';
+const local_storage_panel_top_key = 'chatgpt-text-summary-panel-top-em';
+const local_storage_popup_width_key = 'chatgpt-text-summary-popup-width-em';
+const user_prompt__panel_top_min_em = 3.5;
+const user_prompt__panel_top_max_em = 15;
+const user_prompt__popup_width_min_em = 20;
+const user_prompt__popup_width_max_em = 40;
 
 let user_prompt__default_options = [];
 let user_prompt__options = [];
@@ -6,6 +12,8 @@ let user_prompt__root = null;
 let user_prompt__host = null;
 let user_prompt__selected_index = -1;
 let user_prompt__drag_index = -1;
+let user_prompt__panel_top_em = user_prompt__panel_top_min_em;
+let user_prompt__popup_width_em = 24;
 
 async function user_prompt__load_default_prompt() {
     try {
@@ -34,6 +42,24 @@ function user_prompt__retrieve_from_local_storage() {
     }
 
     return user_prompt__default_options;
+}
+
+function user_prompt__clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
+function user_prompt__retrieve_number_from_local_storage(key, fallbackValue, min, max) {
+    const storedValue = localStorage.getItem(key);
+    if (storedValue === null) return fallbackValue;
+
+    const parsedValue = Number.parseFloat(storedValue);
+    if (Number.isNaN(parsedValue)) return fallbackValue;
+
+    return user_prompt__clamp(parsedValue, min, max);
+}
+
+function user_prompt__store_number_to_local_storage(key, value) {
+    localStorage.setItem(key, value.toString());
 }
 
 async function loadTextContent(element, url) {
@@ -69,6 +95,134 @@ function user_prompt__open() {
     const isOpen = popup.style.display === 'block';
     popup.style.display = isOpen ? 'none' : 'block';
     button.setAttribute('aria-expanded', (!isOpen).toString());
+}
+
+function user_prompt__apply_panel_top() {
+    const panel = user_prompt__qs("#user-prompt-panel");
+    if (!panel) return;
+    panel.style.top = `${user_prompt__panel_top_em}em`;
+}
+
+function user_prompt__apply_popup_width() {
+    const popup = user_prompt__qs("#user-prompt-popup-container");
+    if (!popup) return;
+    popup.style.width = `${user_prompt__popup_width_em}em`;
+}
+
+function user_prompt__setup_open_button_drag() {
+    const button = user_prompt__qs("#user-prompt-open-button");
+    const panel = user_prompt__qs("#user-prompt-panel");
+    if (!button || !panel) return;
+
+    let dragState = null;
+    let suppressClick = false;
+
+    button.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+
+        dragState = {
+            startY: event.clientY,
+            startTopEm: user_prompt__panel_top_em,
+            moved: false
+        };
+
+        button.setPointerCapture(event.pointerId);
+        event.preventDefault();
+    });
+
+    button.addEventListener('pointermove', (event) => {
+        if (!dragState) return;
+
+        const fontSizePx = Number.parseFloat(getComputedStyle(panel).fontSize) || 16;
+        const deltaEm = (event.clientY - dragState.startY) / fontSizePx;
+        const nextTopEm = user_prompt__clamp(
+            dragState.startTopEm + deltaEm,
+            user_prompt__panel_top_min_em,
+            user_prompt__panel_top_max_em
+        );
+
+        if (Math.abs(nextTopEm - dragState.startTopEm) > 0.02) {
+            dragState.moved = true;
+        }
+
+        user_prompt__panel_top_em = nextTopEm;
+        user_prompt__apply_panel_top();
+    });
+
+    button.addEventListener('pointerup', (event) => {
+        if (!dragState) return;
+
+        if (button.hasPointerCapture(event.pointerId)) {
+            button.releasePointerCapture(event.pointerId);
+        }
+
+        if (dragState.moved) {
+            user_prompt__store_number_to_local_storage(local_storage_panel_top_key, user_prompt__panel_top_em);
+            suppressClick = true;
+        }
+
+        dragState = null;
+    });
+
+    button.addEventListener('pointercancel', () => {
+        dragState = null;
+    });
+
+    button.addEventListener('click', (event) => {
+        if (!suppressClick) return;
+        event.preventDefault();
+        event.stopPropagation();
+        suppressClick = false;
+    }, true);
+}
+
+function user_prompt__setup_popup_resize() {
+    const popup = user_prompt__qs("#user-prompt-popup-container");
+    const resizeHandle = user_prompt__qs("#user-prompt-resize-handle");
+    if (!popup || !resizeHandle) return;
+
+    let resizeState = null;
+
+    resizeHandle.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+
+        resizeState = {
+            startX: event.clientX,
+            startWidthEm: user_prompt__popup_width_em
+        };
+
+        popup.classList.add('is-resizing');
+        resizeHandle.setPointerCapture(event.pointerId);
+        event.preventDefault();
+    });
+
+    resizeHandle.addEventListener('pointermove', (event) => {
+        if (!resizeState) return;
+
+        const fontSizePx = Number.parseFloat(getComputedStyle(popup).fontSize) || 16;
+        const deltaEm = (resizeState.startX - event.clientX) / fontSizePx;
+        user_prompt__popup_width_em = user_prompt__clamp(
+            resizeState.startWidthEm + deltaEm,
+            user_prompt__popup_width_min_em,
+            user_prompt__popup_width_max_em
+        );
+
+        user_prompt__apply_popup_width();
+    });
+
+    const finishResize = (pointerId) => {
+        if (!resizeState) return;
+        if (typeof pointerId === 'number' && resizeHandle.hasPointerCapture(pointerId)) {
+            resizeHandle.releasePointerCapture(pointerId);
+        }
+
+        popup.classList.remove('is-resizing');
+        user_prompt__store_number_to_local_storage(local_storage_popup_width_key, user_prompt__popup_width_em);
+        resizeState = null;
+    };
+
+    resizeHandle.addEventListener('pointerup', (event) => finishResize(event.pointerId));
+    resizeHandle.addEventListener('pointercancel', () => finishResize());
 }
 
 function user_prompt__get_color_scheme() {
@@ -350,7 +504,7 @@ async function user_prompt__paste_button_click() {
     }
 
     const wait_propmt = prompt.endsWith(' ');
-    
+
     prompt = await user_prompt__resolve_template(prompt);
     if (prompt === null) return;
     prompt = user_prompt__escape_html(prompt);
@@ -417,6 +571,10 @@ function user_prompt__setup() {
 
     user_prompt__render_list();
     user_prompt__update_prompt_count();
+    user_prompt__apply_panel_top();
+    user_prompt__apply_popup_width();
+    user_prompt__setup_open_button_drag();
+    user_prompt__setup_popup_resize();
 
     const listContainer = user_prompt__qs("#user-prompt-list");
     if (listContainer) {
@@ -437,11 +595,6 @@ function user_prompt__setup() {
         });
     }
 
-    if (user_prompt__options.length > 0) {
-        combo_list.selectedIndex = 0;
-        user_prompt__combo_list_change();
-    }
-
     // add keydown event listener.
     document.addEventListener("keydown", function (event) {
         if (event.key !== "F9" && event.code !== "F9")
@@ -454,6 +607,18 @@ function user_prompt__setup() {
 async function user_prompt__init() {
     await user_prompt__load_default_prompt();
     user_prompt__options = user_prompt__retrieve_from_local_storage();
+    user_prompt__panel_top_em = user_prompt__retrieve_number_from_local_storage(
+        local_storage_panel_top_key,
+        user_prompt__panel_top_min_em,
+        user_prompt__panel_top_min_em,
+        user_prompt__panel_top_max_em
+    );
+    user_prompt__popup_width_em = user_prompt__retrieve_number_from_local_storage(
+        local_storage_popup_width_key,
+        24,
+        user_prompt__popup_width_min_em,
+        user_prompt__popup_width_max_em
+    );
 
     const style = document.createElement('style');
     const div = document.createElement('div');

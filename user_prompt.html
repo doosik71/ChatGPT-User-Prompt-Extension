@@ -1,17 +1,20 @@
 <div id="user-prompt-panel">
     <div id="user-prompt-menubar">
-        <button id="user-prompt-paste-button" class="up-btn up-btn--primary" title="Press [F9] to execute the selected prompt" aria-label="Execute selected prompt">
+        <button id="user-prompt-paste-button" class="up-btn up-btn--primary"
+            title="Press [F9] to execute the selected prompt" aria-label="Execute selected prompt">
             <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M4 3.5L12 8L4 12.5V3.5Z" />
             </svg>
         </button>
-        <button id="user-prompt-open-button" class="up-btn up-btn--ghost" title="Show/hide the prompt menu" aria-label="Show or hide the prompt panel" aria-expanded="false">
+        <button id="user-prompt-open-button" class="up-btn up-btn--ghost" title="Show/hide the prompt menu"
+            aria-label="Show or hide the prompt panel" aria-expanded="false">
             <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M2.5 6H13.5M2.5 10H13.5" />
             </svg>
         </button>
     </div>
     <div id="user-prompt-popup-container">
+        <div id="user-prompt-resize-handle" title="Drag to resize" aria-hidden="true"></div>
         <div id="user-prompt-header">
             <div id="user-prompt-title">Prompt Manager</div>
             <div id="user-prompt-count" aria-live="polite">0 prompts</div>
@@ -26,15 +29,18 @@
             <textarea id="user-prompt-user-input" placeholder="New prompt..." spellcheck="false"></textarea>
         </div>
         <div id="user-prompt-actions">
-            <div class="up-actions-left">
-                <button id="user-prompt-update-button" class="up-btn up-btn--solid" title="Update prompt" aria-label="Update selected prompt">
+            <div id="user-prompt-hint">Templates: <span class="up-mono">{{text}}</span></div>
+            <div class="up-actions-right">
+                <button id="user-prompt-update-button" class="up-btn up-btn--solid" title="Update prompt"
+                    aria-label="Update selected prompt">
                     <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M3 13.5H5.5L12.2 6.8L9.2 3.8L2.5 10.5V13.5Z" />
                         <path d="M8.8 4.2L11.8 7.2" />
                     </svg>
                     Update
                 </button>
-                <button id="user-prompt-add-button" class="up-btn up-btn--solid" title="Add prompt" aria-label="Add new prompt">
+                <button id="user-prompt-add-button" class="up-btn up-btn--solid" title="Add prompt"
+                    aria-label="Add new prompt">
                     <svg class="up-icon" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M8 3V13M3 8H13" />
                     </svg>
@@ -42,6 +48,5 @@
                 </button>
             </div>
         </div>
-        <div id="user-prompt-hint">Templates: <span class="up-mono">{{text}}</span>, <span class="up-mono">{{clipboard}}</span>, <span class="up-mono">{{selection}}</span></div>
     </div>
 </div>
