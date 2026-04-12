@@ -2,20 +2,20 @@
 
 ## Overview
 
-- This is a simple browser extension to manage and use custom text summary prompts for ChatGPT.
-- The extension allows users to store, update, and delete prompts in the browser's local storage and interactively paste those prompts into the ChatGPT input area.
+- This is a simple browser extension to manage and use custom text summary prompts for ChatGPT, Gemini, and Claude.
+- The extension allows users to store, update, and delete prompts in the browser's local storage and interactively paste those prompts into the ChatGPT, Gemini, or Claude input area.
 
 ## Features
 
 - **Prompt Management**: Add, update, delete, and view a list of predefined prompts.
 - **Local Storage**: Prompts are saved in the browser’s local storage for persistence between sessions.
-- **Dynamic Prompt Insertion**: Prompts can be inserted into the ChatGPT input area, with text templates dynamically filled using clipboard content.
+- **Dynamic Prompt Insertion**: Prompts can be inserted into the ChatGPT, Gemini, or Claude input area, with text templates dynamically filled using clipboard content.
 - **User Interface**: Includes buttons and a dropdown for managing prompts.
 - **Keyboard Shortcut**: Pressing `F9` triggers automatic pasting of the selected prompt.
 
 ## Usage
 
-- This extension operates on chatgpt.com.
+- This extension operates on chatgpt.com, gemini.google.com/app, and claude.ai.
 - Press "⊞" button on the right top corner to open prompt panel.
 - Select a prompt to execute.
 - You must have text in clipboard to paste into "{{text}}".
@@ -47,10 +47,13 @@ Please summarize the key points using Markdown bullet style.
 
 ## Conclusion
 
-- This tool streamlines the process of managing and using predefined prompts within ChatGPT.
-- By leveraging local storage, dynamic UI elements, and prompt templates, users can efficiently interact with ChatGPT, enhancing productivity for tasks like content summarization, code generation, and language translation.
+- This tool streamlines the process of managing and using predefined prompts within ChatGPT, Gemini, and Claude.
+- By leveraging local storage, dynamic UI elements, and prompt templates, users can efficiently interact with these chat tools, enhancing productivity for tasks like content summarization, code generation, and language translation.
 
 ## Version History
+
+- v1.5.1
+  - Add support for Claude (claude.ai) and Gemini (gemini.google.com/app).
 
 - v1.5.0
   - Update UI/UX layout.

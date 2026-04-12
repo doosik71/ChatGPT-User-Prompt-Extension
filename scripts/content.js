@@ -442,6 +442,41 @@ function user_prompt__get_selection_text() {
     return selection.toString();
 }
 
+function user_prompt__get_env() {
+    const origin = location.origin;
+    const pathname = location.pathname;
+
+    if (origin === 'https://chatgpt.com')
+        return 'chatgpt';
+    if (origin === 'https://gemini.google.com')
+        return 'gemini';
+    if (origin === 'https://claude.ai')
+        return 'claude';
+
+    return 'other';
+}
+
+function user_prompt__get_textarea(env) {
+    if (env === 'chatgpt')
+        return document.querySelector("#prompt-textarea");
+    if (env === 'gemini')
+        return document.querySelector("body main rich-textarea div.ql-editor");
+    if (env === 'claude')
+        return document.querySelector("div[data-testid=\"chat-input\"]");
+    return null;
+}
+
+function user_prompt__get_send_button(env) {
+    if (env === 'chatgpt')
+        return document.querySelector('button[data-testid="send-button"]');
+    if (env === 'gemini')
+        return document.querySelector('body main chat-window button.send-button');
+    if (env === 'claude')
+        return document.querySelector('fieldset button[aria-label]:not([aria-haspopup])');
+
+    return null;
+}
+
 async function user_prompt__resolve_template(prompt) {
     let resolved = prompt;
     const needsClipboard = /{{(text|clipboard)}}/g.test(resolved);
@@ -475,6 +510,12 @@ async function user_prompt__resolve_template(prompt) {
 }
 
 async function user_prompt__paste_button_click() {
+    const env = user_prompt__get_env();
+    if (env === 'other') {
+        alert("This extension only supports chatgpt.com and gemini.google.com/app.");
+        return;
+    }
+
     // If popup is opened, close it.
     const openButton = user_prompt__qs("#user-prompt-open-button");
     const popup = user_prompt__qs("#user-prompt-popup-container");
@@ -482,10 +523,10 @@ async function user_prompt__paste_button_click() {
         user_prompt__open();
     }
 
-    // Check chatGPT text area.
-    const chatgpt_textarea = document.querySelector("#prompt-textarea");
+    // Check target text area.
+    const target_textarea = user_prompt__get_textarea(env);
 
-    if (chatgpt_textarea === null) {
+    if (target_textarea === null) {
         alert("No text area found!");
         return;
     }
@@ -510,16 +551,16 @@ async function user_prompt__paste_button_click() {
     prompt = user_prompt__escape_html(prompt);
 
     prompt = prompt.replace(/\r/g, '').split('\n').map(line => `<p>${line}</p>`).join('');
-    chatgpt_textarea.focus();
-    chatgpt_textarea.innerHTML = prompt;
-    chatgpt_textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    target_textarea.focus();
+    target_textarea.innerHTML = prompt;
+    target_textarea.dispatchEvent(new Event('input', { bubbles: true }));
 
     if (wait_propmt) {
         return;
     }
 
     requestAnimationFrame(() => {
-        const button = document.querySelector('button[data-testid="send-button"]');
+        const button = user_prompt__get_send_button(env);
         if (button) {
             button.click();
         }
